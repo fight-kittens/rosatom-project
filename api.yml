@@ -35,8 +35,19 @@ components:
         connectedTask:
           type: array
           items:
-            type: integer
-          
+            type: object
+            properties:
+              connectedTaskId:
+                type: integer
+                format: int32
+              scheduleId:
+                type: integer
+                format: int32
+        scheduleId:
+          type: integer
+          format: int32
+
+
     ArrayOfTasks:
       type: array
       items:
