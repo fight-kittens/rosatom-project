@@ -267,7 +267,7 @@ paths:
     get:
       description: Gets connected tasks by task ID
       parameters:
-        - in: path
+        - in: query
           name: id
           schema:
             type: array
