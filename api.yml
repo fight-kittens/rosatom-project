@@ -32,7 +32,7 @@ components:
         parentTask:
           type: integer
           format: int32
-        connectedTask:
+        connectedTasks:
           type: array
           items:
             type: object
