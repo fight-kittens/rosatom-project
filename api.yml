@@ -72,26 +72,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  
-  /tasks:
-    post:
-      description: Adds task to the database
-      parameters:
-        - in: body
-          name: task
-          schema:
-            $ref: '#/components/schemas/Task'
-          required: true
-          description: Task object
-      responses:
-        '200':
-          description: Task was added
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
 
-  /tasks/{id}:
     delete:
       description: Deletes task from database
       parameters:
@@ -116,8 +97,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-                
-  /tasks/{id}:
+
     put:
       description: Changes task by ID
       parameters:
@@ -152,6 +132,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              
+  /tasks:
+    post:
+      description: Adds task to the database
+      parameters:
+        - in: body
+          name: task
+          schema:
+            $ref: '#/components/schemas/Task'
+          required: true
+          description: Task object
+      responses:
+        '200':
+          description: Task was added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
 
   /tasks/{id}/children:
     get:
