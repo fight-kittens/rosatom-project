@@ -16,7 +16,7 @@ components:
         shiftEarlierPrice:
           type: integer
           format: int32
-        shiftEarlierPrice:
+        shiftLaterPrice:
           type: integer
           format: int32
         duration:
