@@ -1,5 +1,5 @@
 title: RosAtom
-description: Uzhasnie Dyadki
+description: Gus ne bous
 components:
   schemas:
     Task:
@@ -64,7 +64,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
   
-  /addTask:
+  /tasks:
     post:
       description: Adds task to the database
       parameters:
@@ -73,11 +73,16 @@ paths:
           schema:
             $ref: '#/components/schemas/Task'
           required: true
-          description: Numeric ID of task to get
+          description: Task object
       responses:
         '200':
           description: Task was added
-  /deleteTask/{id}:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+
+  /tasks/{id}:
     delete:
       description: Deletes task from database
       parameters:
@@ -90,6 +95,42 @@ paths:
       responses:
         '200':
           description: Task was deleted
+        '400':
+          description: Bad request. Task ID must be an integer and larger than 0.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: A task with the specified ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+  /tasks/{id}:
+    put:
+      description: Changes task by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of task to change
+        - in: body
+          name: task
+          schema:
+            $ref: '#/components/schemas/Task'
+          required: true
+          description: Task object
+      responses:
+        '200':
+          description: Task was deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
         '400':
           description: Bad request. Task ID must be an integer and larger than 0.
           content:
