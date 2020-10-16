@@ -28,6 +28,9 @@ components:
         reduceDurationPrice:
           type: integer
           format: int32
+        parentTask:
+          type: integer
+          format: int32
     Error:
       type: object
       properties:
