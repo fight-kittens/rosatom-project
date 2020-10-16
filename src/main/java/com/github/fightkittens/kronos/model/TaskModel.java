@@ -151,6 +151,6 @@ public class TaskModel implements TaskResponse {
         this.reduceDurationPrice = task.getReduceDurationPrice();
         this.parentTask = (task.getParent() == null ? null : task.getParent().getId());
         this.children = task.getChildren().stream().map(Task::getId).collect(Collectors.toList());
-        this.children = task.getConnected().stream().map(Task::getId).collect(Collectors.toList());
+        this.connected = task.getConnected().stream().map(Task::getId).collect(Collectors.toList());
     }
 }

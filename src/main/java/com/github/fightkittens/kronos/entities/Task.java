@@ -30,7 +30,7 @@ public class Task {
     @JoinTable(name = "stream_relation", joinColumns = {
             @JoinColumn(name = "task_id", referencedColumnName = "id")}, inverseJoinColumns = {
             @JoinColumn(name = "pair_id", referencedColumnName = "id")})
-    @ManyToMany(targetEntity = Task.class, cascade = CascadeType.REFRESH)
+    @ManyToMany(targetEntity = Task.class, cascade = CascadeType.ALL)
     private List<Task> connected;
 
     public Task(TaskModel taskModel, Task parent) {
@@ -42,6 +42,9 @@ public class Task {
         this.minDuration = taskModel.getMinDuration();
         this.reduceDurationPrice = taskModel.getReduceDurationPrice();
         this.parent = parent;
+        if (parent != null) {
+            parent.addChild(this);
+        }
         this.children = new ArrayList<>();
         this.connected = new ArrayList<>();
     }
@@ -136,5 +139,13 @@ public class Task {
 
     public void setConnected(List<Task> connected) {
         this.connected = connected;
+    }
+
+    public void addChild(Task task) {
+        this.children.add(task);
+    }
+
+    public void addConnected(Task task) {
+        this.connected.add(task);
     }
 }
