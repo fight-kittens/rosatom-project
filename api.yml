@@ -13,10 +13,10 @@ components:
         startDate:
           type: string
           format: date
-        priceForShiftStartDayEarlier:
+        shiftEarlierPrice:
           type: integer
           format: int32
-        priceForShiftDayLater:
+        shiftEarlierPrice:
           type: integer
           format: int32
         duration:
@@ -25,7 +25,7 @@ components:
         minDuration:
           type: integer
           format: int32
-        priceForReduceDuration:
+        reduceDurationPrice:
           type: integer
           format: int32
     Error:
@@ -34,7 +34,7 @@ components:
         message:
           type: string
 paths:
-  /Tasks/{id}:
+  /tasks/{id}:
     get:
       description: Returns task by id
       parameters:
