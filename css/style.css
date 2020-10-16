@@ -1,0 +1,377 @@
+
+a{
+	text-decoration:none;
+}
+body{
+	font-family:'RosatomRegular';
+}
+/*-----------------------------------------------------------------*/
+header{
+	width: 100%;
+	height: 10%;
+	display: flex;
+}
+.header_logo img{
+	height: 120%;
+	margin-left: 20px;
+}
+nav{
+	display: block; /* смещает только блоки */ 
+	margin-left: auto;
+}
+#sorry{
+	color: white;
+}
+.topnav img{
+	height: 30%;
+}
+.topnav p{
+	font-size: 18;
+	display: inline-block;
+	width: 30%;
+	margin-right:50px;
+}
+.topnav a{
+	width: 10%;
+	margin-right:10px;
+	font-size: 18;
+	display: inline-block;
+}
+main{
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;	
+}
+.autorizField{
+	width: 60%;
+	background-color: #003274;
+	border-radius: 20px 20px;
+	margin: auto;
+	padding: 30px;
+	padding-bottom: 50px;
+}
+#log_table{
+	margin: auto;
+	padding-bottom:20px;
+}
+#text{
+	color: white;
+}
+input[type=text]{
+	padding: 5px 5px;
+	margin: 5px;
+	border-radius: 10px;
+}
+form{
+	margin:0;
+}
+.form_log h2{
+	text-align: center;
+	color: white;
+}
+input[type=submit]{
+	color: white;
+	padding: 5px 5px;
+	border: 2px solid white;
+	border-radius: 20px;
+	background-color: #4495D1;
+	cursor: pointer;
+	width: 10%;
+}
+input[type=submit]:hover{
+	background-color: #6CACE4;
+}
+#logBut{
+	margin: 5px;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%) 
+	}
+
+/*-----------------projectList------------------*/
+.filter{
+	margin-left: 5%;
+	margin-bottom: 10px;
+}
+.filter label{
+	margin-right:15px;
+	margin-left:15px;
+}
+select{
+	padding: 5px 5px;
+	margin: 5px;
+	border-radius: 5px;
+	background-color: #dfe7ea;
+	border: none;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+option{
+	background-color: white;
+	border:#dfe7ea;
+}
+#projectName{
+	margin-top: 3%;
+	margin-left: 5%;
+	margin-bottom:3%;
+	font-size: 18px;
+	font-family:RosatomBold;
+}
+/* скрываем чекбоксы и блоки с содержанием */
+.hide {
+    display: none; 
+}
+.hide + label ~ div{
+    display: none;
+}
+/* оформляем текст label */
+.hide + label {
+    padding: 0;
+    cursor: pointer;
+    display: inline-block; 
+}
+/* вид текста label при активном переключателе */
+.hide:checked + label {
+    border-bottom: 0;
+}
+.hide:checked + img {
+    background-image: url(../image/drop-up-list.png.png);
+}
+/* когда чекбокс активен показываем блоки с содержанием  */
+.hide:checked + label + div {
+    display: block; 
+    background: #efefef;
+    padding: 10px; 
+	overflow: scroll;
+	height: 20%; /* Высота блока */
+}
+/* скрываем чекбоксы и блоки с содержанием */
+.hide1 {
+    display: none; 
+}
+.hide1 + label ~ div{
+    display: none;
+}
+/* оформляем текст label */
+.hide1 + label {
+    padding: 0;
+    cursor: pointer;
+    display: inline-block; 
+}
+/* вид текста label при активном переключателе */
+.hide1:checked + label {
+    border-bottom: 0;
+}
+.hide1:checked + img {
+    background-image: url(../image/drop-up-list.png.png);
+}
+/* когда чекбокс активен показываем блоки с содержанием  */
+.hide1:checked + label + div {
+    display: block; 
+    background: #efefef;
+    padding: 10px; 
+	overflow: scroll;
+	height: 20%; /* Высота блока */
+}
+
+/* demo контейнер */
+.ProjectsList {
+    margin: 10%;
+}
+.project{
+	background: #6CACE4;
+	border: 2px solid #4495D1;
+	border-radius: 20px;
+	padding: 10px;
+	margin-right: 5%;
+	margin-left: 5%;
+}
+.project label{
+	color: white;
+}
+.project img{
+	width: 20px;
+	margin-top: 0.6%;
+	position: absolute;
+    left: 90%;
+    transform: translate(-50%, -50%) 
+}
+.projectName{
+	display: flex;
+}
+.name{
+	width: 40%;
+	float: left; 
+}
+.name a{
+	color: white;
+}
+.topnav a:hover{
+	color: white;
+}
+.diaram{
+	width: 60%;
+	float: left; 
+	padding:0;
+	margin:0;
+}
+.diagram p{
+	padding:0;
+	margin:0;
+}
+:root {
+  --white: #fff;
+  --divider: lightgrey;
+  --body: #f5f7f8;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+body {
+  background: var(--body);
+  font-size: 16px;
+  font-family: sans-serif;
+  padding-top: 40px;
+}
+
+.chart-wrapper {
+  max-width: 1150px;
+  padding: 0 10px;
+  margin: 0 auto;
+}
+
+
+/* CHART-VALUES
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.chart-wrapper .chart-values {
+  position: relative;
+  display: flex;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.chart-wrapper .chart-values li {
+  flex: 1;
+  min-width: 80px;
+  text-align: center;
+}
+
+.chart-wrapper .chart-values li:not(:last-child) {
+  position: relative;
+}
+
+.chart-wrapper .chart-values li:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  height: 510px;
+  border-right: 1px solid var(--divider);
+}
+
+
+/* CHART-BARS
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.chart-wrapper .chart-bars li {
+  position: relative;
+  color: var(--white);
+  margin-bottom: 15px;
+  font-size: 16px;
+  border-radius: 20px;
+  padding: 10px 20px;
+  width: 0;
+  opacity: 0;
+  transition: all 0.65s linear 0.2s;
+}
+
+@media screen and (max-width: 600px) {
+  .chart-wrapper .chart-bars li {
+    padding: 10px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@font-face {
+font-family: "RosatomRegular"; 
+src: url("../fonts/Rosatom-Regular_W/Rosatom-Regular_W.eot"); 
+src: url("../fonts/Rosatom-Regular_W/Rosatom-Regular_W.eot?#iefix") format("embedded-opentype"),
+url("../fonts/Rosatom-Regular_W/Rosatom-Regular_W.woff") format("woff"), 
+url("../fonts/Rosatom-Regular_W/Rosatom-Regular_W.ttf") format("truetype"); 
+font-style: normal; 
+font-weight: normal; 
+}
+@font-face {
+font-family: "RosatomLight"; 
+src: url("../fonts/Rosatom-Light_W/Rosatom-Light_W.eot"); 
+src: url("../fonts/Rosatom-Light_W/Rosatom-Light_W.eot?#iefix") format("embedded-opentype"),
+url("../fonts/Rosatom-Light_W/Rosatom-Light_W.woff") format("woff"), 
+url("../fonts/Rosatom-Light_W/Rosatom-Light_W.ttf") format("truetype"); 
+font-style: normal; 
+font-weight: normal; 
+}
+@font-face {
+font-family: "RosatomItalic"; 
+src: url("../fonts/Rosatom-Italic_W/Rosatom-Italic_W.eot"); 
+src: url("../fonts/Rosatom-Italic_W/Rosatom-Italic_W.eot?#iefix") format("embedded-opentype"),
+url("../fonts/Rosatom-Italic_W/Rosatom-Italic_W.woff") format("woff"), 
+url("../fonts/Rosatom-Italic_W/Rosatom-Italic_W.ttf") format("truetype"); 
+font-style: normal; 
+font-weight: normal; 
+}
+@font-face {
+font-family: "RosatomBold"; 
+src: url("../fonts/Rosatom-Bold_W/Rosatom-Bold_W.eot"); 
+src: url("../fonts/Rosatom-Bold_W/Rosatom-Bold_W.eot?#iefix") format("embedded-opentype"),
+url("../fonts/Rosatom-Bold_W/Rosatom-Bold_W.woff") format("woff"), 
+url("../fonts/Rosatom-Bold_W/Rosatom-Bold_W.ttf") format("truetype"); 
+font-style: normal; 
+font-weight: normal; 
+}

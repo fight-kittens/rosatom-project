@@ -1,0 +1,48 @@
+<html lang="ru">
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Авторизация</title>
+	<link rel="stylesheet" href="../css/style.css" type="text/css">
+</head>
+
+<body>
+	<header>
+		<div class="header_logo">
+			<img src="../image/logo_rosatom.png">
+		</div>
+		<nav>
+			<div class="topnav" id="myTopnav">
+			
+				<p id="sorry">User_name</p>
+			</div>
+		</nav>
+	</header>
+	
+	<main>
+		<div class="autorizField">
+			<div class="form_log">
+				<h2>Добро пожаловать</h2>
+				<form name="login" onsubmit="return false;" method="post" action="#">
+					<table id="log_table">
+						<div class="inputs">
+							<tr>
+								<td id="text" width="20%"><p>Логин:</p></td>
+								<td id="text" width="60%"><input type="text" name="userLogin" placeholder="Введите логин" value=""></td>
+							</tr>
+							
+							<tr>
+								<td id="text" width="20%"><p>Пароль:</p></td>
+								<td id="text" width="60%"><input type="text" name="userNik" placeholder="Введите пароль" value=""></td>
+								
+							</tr>
+						</div>
+					</table>
+					<input type="submit" id="logBut" name="butLog" value="Войти">
+				</form>
+			</div>
+		</div>
+	</main>
+	
+</body>
+</html>

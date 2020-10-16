@@ -1,0 +1,76 @@
+<html lang="ru">
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Project_name</title>
+	<link rel="stylesheet" href="../css/style.css" type="text/css">
+</head>
+
+<body>
+	<header>
+		<div class="header_logo">
+			<img src="../image/logo_rosatom.png">
+		</div>
+		<nav>
+			<div class="topnav" id="myTopnav">
+				<a href="userSetting.html"><img src="../image/setting.png"></a>
+				<p>User_name</p>
+			</div>
+		</nav>
+	</header>
+	<main>
+		<p id="projectName">Project_Name (Дата: 01.01.2020 - 03.05.2022)</p>
+		<div class="filter">
+			<form name="chooseFilter" onsubmit="return false;" method="post" action="#">
+			
+				<label>Риски</label><select size="1" name="filtePoint">
+					<option selected>По умолчанию</option>
+					<option value="dateStart">Риск по убыванию</option>
+					<option value="dateEnd">Риск по возрастанию</option>
+				</select>
+				
+				<label>Начало периода</label><input type="date" id="start" name="trip-start" value="2018-07-22" min="2018-01-01" max="2018-12-31">
+				<label>Конец периода</label><input type="date" id="end" name="trip-end" value="2018-07-22" min="2018-01-01" max="2018-12-31">
+				
+				<input type="submit" id="filtBut" name="butFilt" value="Применить">
+			</form>
+		</div>
+		
+		<div class="projectList">
+			
+			<div class="project">
+				
+				<img src="../image/drop-down-list.png"/>
+				<input type="checkbox" id="hd-1" class="hide"/>
+				<label for="hd-1" >id:0000001, work_Name, Date 01.01.2020 - 01.01.2021, risk</label> 
+				<div>
+						HTML — стандартный язык разметки документов во Всемирной паутине. Большинство веб-страниц содержат описание разметки на языке HTML (или XHTML). Язык HTML интерпретируется браузерами и отображается в виде документа в удобной для человека форме..
+				</div>
+			</div>
+						<br/>
+
+			<div class="project">
+				
+				<img src="../image/drop-down-list.png"/>
+				<input type="checkbox" id="hd-2" class="hide"/>
+				<label for="hd-2" >id:0000002, work_Name, Date 01.01.2020 - 01.01.2021, risk</label> 
+				<div>
+						HTML — стандартный язык разметки документов во Всемирной паутине. Большинство веб-страниц содержат описание разметки на языке HTML (или XHTML). Язык HTML интерпретируется браузерами и отображается в виде документа в удобной для человека форме..
+				</div>
+			</div>
+			<br/><div class="project">
+				
+				<img src="../image/drop-down-list.png"/>
+				<input type="checkbox" id="hd-3" class="hide"/>
+				<label for="hd-3" >id:0000003, work_Name, Date 01.01.2020 - 01.01.2021, risk</label> 
+				<div>
+						HTML — стандартный язык разметки документов во Всемирной паутине. Большинство веб-страниц содержат описание разметки на языке HTML (или XHTML). Язык HTML интерпретируется браузерами и отображается в виде документа в удобной для человека форме..
+				</div>
+			</div>
+			<br/>
+			
+		</div>
+	</main>
+
+</body>
+</html>
