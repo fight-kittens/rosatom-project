@@ -1,0 +1,104 @@
+title: RosAtom
+description: Uzhasnie Dyadki
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        id: 
+          type: integer
+          format: int32
+        name:
+          type: string
+        startDate:
+          type: string
+          format: date
+        priceForShiftStartDayEarlier:
+          type: integer
+          format: int32
+        priceForShiftDayLater:
+          type: integer
+          format: int32
+        duration:
+          type: integer
+          format: int32
+        minDuration:
+          type: integer
+          format: int32
+        priceForReduceDuration:
+          type: integer
+          format: int32
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+paths:
+  /Tasks/{id}:
+    get:
+      description: Returns task by id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of task to get
+      responses:
+        '200':
+          description: a task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Bad request. Task ID must be an integer and larger than 0.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: A task with the specified ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /addTask:
+    post:
+      description: Adds task to the database
+      parameters:
+        - in: body
+          name: task
+          schema:
+            $ref: '#/components/schemas/Task'
+          required: true
+          description: Numeric ID of task to get
+      responses:
+        '200':
+          description: Task was added
+  /deleteTask/{id}:
+    delete:
+      description: Deletes task from database
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of task to delete
+      responses:
+        '200':
+          description: Task was deleted
+        '400':
+          description: Bad request. Task ID must be an integer and larger than 0.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: A task with the specified ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
