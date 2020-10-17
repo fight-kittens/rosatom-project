@@ -11,8 +11,8 @@ import java.util.Collection;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Integer> {
-    @Query(value = "FROM Task t WHERE t.startDate >= :start AND t.duration < :duration")
-    Collection<Task> filterByDate(@Param("start") Date start, @Param("duration") int duration);
+    @Query(value = "FROM Task t WHERE t.startDate >= :start AND t.startDate <= :end")
+    Collection<Task> filterByDate(@Param("start") Date start, @Param("end") Date end);
     @Query(value = "FROM Task t WHERE t.scheduleId = :id")
     Collection<Task> filterBySchedule(@Param("id") int id);
 }

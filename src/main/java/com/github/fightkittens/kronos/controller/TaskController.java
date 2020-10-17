@@ -228,7 +228,7 @@ public class TaskController {
         if (task != null) {
             TaskModel model = new TaskModel(task);
             SortedSet<TaskModel> results = repository.findAllById(model.getChildren())
-                    .stream().map(TaskModel::new).distinct().collect(Collectors.toCollection(TreeSet::new));
+                    .stream().map(TaskModel::new).collect(Collectors.toCollection(TreeSet::new));
             TaskArray children = new TaskArray(results);
             return new ResponseEntity<>(children, HttpStatus.OK);
         }
@@ -247,10 +247,8 @@ public class TaskController {
                 return new ResponseEntity<>(new ErrorResponse("The end date is before the start date"),
                         HttpStatus.BAD_REQUEST);
             }
-            int duration = (int) DAYS.between(start.toInstant(), end.toInstant());
-            SortedSet<TaskModel> results = repository.filterByDate(start, duration)
-                    .stream().filter(t -> (t.getDuration() <= DAYS.between(t.getStartDate().toInstant(), end.toInstant())))
-                    .map(TaskModel::new).collect(Collectors.toCollection(TreeSet::new));
+            SortedSet<TaskModel> results = repository.filterByDate(start, end)
+                    .stream().map(TaskModel::new).collect(Collectors.toCollection(TreeSet::new));
             return new ResponseEntity<>(new TaskArray(results), HttpStatus.OK);
         } catch (ParseException e) {
             return new ResponseEntity<>(new ErrorResponse("Invalid date format"),
