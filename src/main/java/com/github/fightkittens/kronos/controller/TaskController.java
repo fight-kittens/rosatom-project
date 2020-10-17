@@ -50,14 +50,6 @@ public class TaskController {
                 return new ResponseEntity<>(new ErrorResponse(String.format("Task with id %d not found", id)),
                         HttpStatus.NOT_FOUND);
             }
-            if (task.getParent() != null) {
-                task.getParent().getChildren().remove(task);
-                repository.save(task.getParent());
-            }
-            for (Task child : task.getChildren()) {
-                child.setParent(null); //вопрос - удаляем ли и детей рекуррентно
-                repository.save(child);
-            }
             repository.deleteById(id);
             repository.flush();
             return new ResponseEntity<>(HttpStatus.OK);
@@ -84,38 +76,14 @@ public class TaskController {
             task.setShiftEarlierPrice(model.getShiftEarlierPrice());
             task.setShiftLaterPrice(model.getShiftLaterPrice());
 
-            Task parentTask;
-            if (model.getParentTask() == null) {
-                parentTask = null;
-            } else {
-                parentTask = repository.findById(model.getParentTask()).orElse(null);
-            }
-            task.setParent(parentTask);
-            if (parentTask != null) {
-                repository.save(parentTask);
-            }
             for (Integer childId : model.getChildren()) {
                 Task childTask = repository.findById(childId).orElse(null);
                 if (childTask == null) {
                     return new ResponseEntity<>(new ErrorResponse(String.format("Child with id %d not found", childId)), HttpStatus.BAD_REQUEST);
                 } else {
-                    if (childTask.getParent() != null) {
-                        return new ResponseEntity<>(new ErrorResponse(String.format("Child with id %d already has a parent", id)), HttpStatus.BAD_REQUEST);
-                    }
-                    childTask.setParent(task);
                     task.addChild(childTask);
                     repository.save(task);
                     repository.save(childTask);
-                }
-            }
-            for (Integer connId : model.getConnected()) {
-                Task connectedTask = repository.findById(connId).orElse(null);
-                if (connectedTask == null) {
-                    return new ResponseEntity<>(new ErrorResponse(String.format("Connected task with id %d not found", connId)), HttpStatus.BAD_REQUEST);
-                } else {
-                    task.addConnected(connectedTask);
-                    connectedTask.addConnected(task);
-                    repository.save(connectedTask);
                 }
             }
             repository.saveAndFlush(task);
@@ -129,39 +97,16 @@ public class TaskController {
     @ResponseBody
     public ResponseEntity<? extends TaskResponse> addTask(@RequestBody TaskModel model) {
         try {
-            Task parentTask;
-            if (model.getParentTask() == null) {
-                parentTask = null;
-            } else {
-                parentTask = repository.findById(model.getParentTask()).orElse(null);
-            }
-            Task task = new Task(model, parentTask);
+            Task task = new Task(model);
             repository.save(task);
-            if (parentTask != null) {
-                repository.save(parentTask);
-            }
             for (Integer id : model.getChildren()) {
                 Task childTask = repository.findById(id).orElse(null);
                 if (childTask == null) {
                     return new ResponseEntity<>(new ErrorResponse(String.format("Child with id %d not found", id)), HttpStatus.BAD_REQUEST);
                 } else {
-                    if (childTask.getParent() != null) {
-                        return new ResponseEntity<>(new ErrorResponse(String.format("Child with id %d already has a parent", id)), HttpStatus.BAD_REQUEST);
-                    }
-                    childTask.setParent(task);
                     task.addChild(childTask);
                     repository.save(task);
                     repository.save(childTask);
-                }
-            }
-            for (Integer id : model.getConnected()) {
-                Task connectedTask = repository.findById(id).orElse(null);
-                if (connectedTask == null) {
-                    return new ResponseEntity<>(new ErrorResponse(String.format("Connected task with id %d not found", id)), HttpStatus.BAD_REQUEST);
-                } else {
-                    task.addConnected(connectedTask);
-                    connectedTask.addConnected(task);
-                    repository.save(connectedTask);
                 }
             }
             repository.saveAndFlush(task);
@@ -179,40 +124,17 @@ public class TaskController {
             SortedSet<Integer> tasks = new TreeSet<>();
             SortedSet<TaskModel> modelArray = array.getTasks();
             for (TaskModel model : modelArray) {
-                Task parentTask;
-                if (model.getParentTask() == null) {
-                    parentTask = null;
-                } else {
-                    parentTask = repository.findById(model.getParentTask()).orElse(null);
-                }
-                Task task = new Task(model, parentTask);
+                Task task = new Task(model);
                 repository.save(task);
-                if (parentTask != null) {
-                    repository.save(parentTask);
-                }
                 for (Integer id : model.getChildren()) {
                     Task childTask = repository.findById(id).orElse(null);
                     if (childTask == null) {
                         return new ResponseEntity<>(new ErrorResponse(String.format("Child with id %d not found", id)), HttpStatus.BAD_REQUEST);
                     } else {
-                        if (childTask.getParent() != null) {
-                            return new ResponseEntity<>(new ErrorResponse(String.format("Child with id %d already has a parent", id)), HttpStatus.BAD_REQUEST);
-                        }
-                        childTask.setParent(task);
                         task.addChild(childTask);
                         repository.save(task);
                         repository.save(childTask);
                         logger.info("{}: {}", task.getId(), childTask.getId());
-                    }
-                }
-                for (Integer id : model.getConnected()) {
-                    Task connectedTask = repository.findById(id).orElse(null);
-                    if (connectedTask == null) {
-                        return new ResponseEntity<>(new ErrorResponse(String.format("Connected task with id %d not found", id)), HttpStatus.BAD_REQUEST);
-                    } else {
-                        task.addConnected(connectedTask);
-                        connectedTask.addConnected(task);
-                        repository.save(connectedTask);
                     }
                 }
                 tasks.add(task.getId());
@@ -223,51 +145,6 @@ public class TaskController {
             e.printStackTrace();
             return new ResponseEntity<>(new ErrorResponse("Exception: " + e.getMessage()), HttpStatus.BAD_REQUEST);
         }
-    }
-
-
-    @GetMapping(value = "/connected/{id}", produces = "application/json")
-    @ResponseBody
-    public ResponseEntity<? extends TaskResponse> getConnectedById(@PathVariable int id) {
-        if (id <= 0) {
-            return new ResponseEntity<>(new ErrorResponse(String.format("Task id must be a positive integer", id)),
-                    HttpStatus.BAD_REQUEST);
-        }
-        Task task = repository.findById(id).orElse(null);
-        if (task != null) {
-            TaskModel model = new TaskModel(task);
-            SortedSet<TaskModel> results = repository.findAllById(model.getConnected())
-                    .stream().map(TaskModel::new).collect(Collectors.toCollection(TreeSet::new));
-            TaskArray connected = new TaskArray(results);
-            return new ResponseEntity<>(connected, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(new ErrorResponse(String.format("Task with id %d not found", id)),
-                HttpStatus.NOT_FOUND);
-    }
-
-    @PostMapping(value = "/connected/batch", produces = "application/json")
-    @ResponseBody
-    public ResponseEntity<? extends TaskResponse> getConnectedById(@RequestBody TaskIdArray ids) {
-        Set<Integer> resultIds = new TreeSet<>();
-        Set<Integer> tasks = ids.getTasks();
-        for (Integer id : tasks) {
-            if (id <= 0) {
-                return new ResponseEntity<>(new ErrorResponse(String.format("Task id must be a positive integer", id)),
-                        HttpStatus.BAD_REQUEST);
-            }
-            Task task = repository.findById(id).orElse(null);
-            if (task != null) {
-                TaskModel model = new TaskModel(task);
-                resultIds.addAll(model.getConnected());
-            } else {
-                return new ResponseEntity<>(new ErrorResponse(String.format("Task with id %d not found", id)),
-                        HttpStatus.NOT_FOUND);
-            }
-        }
-
-        SortedSet<TaskModel> results = repository.findAllById(resultIds).stream()
-                .map(TaskModel::new).collect(Collectors.toCollection(TreeSet::new));
-        return new ResponseEntity<>(new TaskArray(results), HttpStatus.OK);
     }
 
     @GetMapping(value = "/children/{id}", produces = "application/json")
@@ -289,6 +166,23 @@ public class TaskController {
                 HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping(value = "/parents/{id}", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<? extends TaskResponse> getParents(@PathVariable int id) {
+        if (id <= 0) {
+            return new ResponseEntity<>(new ErrorResponse(String.format("Task id must be a positive integer", id)),
+                    HttpStatus.BAD_REQUEST);
+        }
+        Task task = repository.findById(id).orElse(null);
+        if (task != null) {
+            SortedSet<TaskModel> results = repository.findAll()
+                    .stream().filter(t -> t.getChildren().stream().anyMatch(tsk -> tsk.getId() == id)).map(TaskModel::new).collect(Collectors.toCollection(TreeSet::new));
+            TaskArray parents = new TaskArray(results);
+            return new ResponseEntity<>(parents, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ErrorResponse(String.format("Task with id %d not found", id)),
+                HttpStatus.NOT_FOUND);
+    }
 
     @GetMapping(produces = "application/json")
     @ResponseBody

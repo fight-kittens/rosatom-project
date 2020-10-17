@@ -5,14 +5,10 @@ import com.github.fightkittens.kronos.model.TaskModel;
 import javax.persistence.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
-public class Task {
+public class Task implements Comparable<Task> {
     @Id
     @GeneratedValue
     @Column(name="id")
@@ -24,18 +20,11 @@ public class Task {
     private int duration;
     private int minDuration;
     private int reduceDurationPrice;
-    @JoinTable(name = "task_relation", joinColumns = {
-            @JoinColumn(name = "child_id", referencedColumnName = "id")}, inverseJoinColumns = {
-            @JoinColumn(name = "parent_id", referencedColumnName = "id")})
-    @ManyToOne(targetEntity = Task.class, cascade = CascadeType.ALL)
-    private Task parent;
-    @OneToMany(targetEntity = Task.class)
-    private Set<Task> children;
-    @JoinTable(name = "stream_relation", joinColumns = {
-            @JoinColumn(name = "task_id", referencedColumnName = "id")}, inverseJoinColumns = {
-            @JoinColumn(name = "pair_id", referencedColumnName = "id")})
     @ManyToMany(targetEntity = Task.class, cascade = CascadeType.ALL)
-    private Set<Task> connected;
+    @JoinTable(name = "task_relations",
+            joinColumns = @JoinColumn(name = "id"),
+            inverseJoinColumns = @JoinColumn(name = "child_id"))
+    private Set<Task> children;
     private int scheduleId;
 
     public Task(TaskModel taskModel) throws ParseException {
@@ -46,27 +35,7 @@ public class Task {
         this.duration = taskModel.getDuration();
         this.minDuration = taskModel.getMinDuration();
         this.reduceDurationPrice = taskModel.getReduceDurationPrice();
-        this.parent = null;
-        this.children = new LinkedHashSet<>();
-        this.connected = new LinkedHashSet<>();
-        this.scheduleId = taskModel.getScheduleId();
-    }
-
-
-    public Task(TaskModel taskModel, Task parent) throws ParseException {
-        this.name = taskModel.getName();
-        this.startDate = new SimpleDateFormat("yyyy-MM-dd").parse(taskModel.getStartDate());
-        this.shiftEarlierPrice = taskModel.getShiftEarlierPrice();
-        this.shiftLaterPrice = taskModel.getShiftLaterPrice();
-        this.duration = taskModel.getDuration();
-        this.minDuration = taskModel.getMinDuration();
-        this.reduceDurationPrice = taskModel.getReduceDurationPrice();
-        this.parent = parent;
-        if (parent != null) {
-            parent.addChild(this);
-        }
-        this.children = new LinkedHashSet<>();
-        this.connected = new LinkedHashSet<>();
+        this.children = new TreeSet<>();
         this.scheduleId = taskModel.getScheduleId();
     }
 
@@ -138,31 +107,12 @@ public class Task {
         this.reduceDurationPrice = reduceDurationPrice;
     }
 
-    public Task getParent() {
-        return parent;
-    }
-
-    public void setParent(Task parent) {
-        this.parent = parent;
-        if (parent != null) {
-            parent.addChild(this);
-        }
-    }
-
     public Set<Task> getChildren() {
         return children;
     }
 
     public void setChildren(Set<Task> children) {
         this.children = children;
-    }
-
-    public Set<Task> getConnected() {
-        return connected;
-    }
-
-    public void setConnected(Set<Task> connected) {
-        this.connected = connected;
     }
 
     public int getScheduleId() {
@@ -177,7 +127,8 @@ public class Task {
         this.children.add(task);
     }
 
-    public void addConnected(Task task) {
-        this.connected.add(task);
+    @Override
+    public int compareTo(Task o) {
+        return Integer.compare(id, o.getId());
     }
 }

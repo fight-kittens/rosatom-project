@@ -20,9 +20,7 @@ public class TaskModel implements TaskResponse, Comparable<TaskModel> {
     private int duration;
     private int minDuration;
     private int reduceDurationPrice;
-    private Integer parentTask;
     private Set<Integer> children;
-    private Set<Integer> connected;
     private int scheduleId;
 
     public int getId() {
@@ -89,32 +87,12 @@ public class TaskModel implements TaskResponse, Comparable<TaskModel> {
         this.reduceDurationPrice = reduceDurationPrice;
     }
 
-    public Integer getParentTask() {
-        return parentTask;
-    }
-
-    public void setParentTask(int parentTask) {
-        this.parentTask = parentTask;
-    }
-
-    public void setParentTask(Integer parentTask) {
-        this.parentTask = parentTask;
-    }
-
     public Set<Integer> getChildren() {
         return children;
     }
 
     public void setChildren(Set<Integer> children) {
         this.children = children;
-    }
-
-    public Set<Integer> getConnected() {
-        return connected;
-    }
-
-    public void setConnected(Set<Integer> connected) {
-        this.connected = connected;
     }
 
     public int getScheduleId() {
@@ -135,9 +113,7 @@ public class TaskModel implements TaskResponse, Comparable<TaskModel> {
                      @JsonProperty("duration") int duration,
                      @JsonProperty("minDuration") int minDuration,
                      @JsonProperty("reduceDurationPrice") int reduceDurationPrice,
-                     @JsonProperty("parentTask") Integer parentTask,
                      @JsonProperty("childrenTasks") Set<Integer> children,
-                     @JsonProperty("connectedTasks") Set<Integer> connected,
                      @JsonProperty("scheduleId") int scheduleId) {
         this.name = name;
         this.startDate = startDate;
@@ -146,9 +122,7 @@ public class TaskModel implements TaskResponse, Comparable<TaskModel> {
         this.duration = duration;
         this.minDuration = minDuration;
         this.reduceDurationPrice = reduceDurationPrice;
-        this.parentTask = parentTask;
         this.children = children;
-        this.connected = connected;
         this.scheduleId = scheduleId;
     }
 
@@ -161,9 +135,7 @@ public class TaskModel implements TaskResponse, Comparable<TaskModel> {
         this.duration = task.getDuration();
         this.minDuration = task.getMinDuration();
         this.reduceDurationPrice = task.getReduceDurationPrice();
-        this.parentTask = (task.getParent() == null ? null : task.getParent().getId());
         this.children = task.getChildren().stream().map(Task::getId).collect(Collectors.toSet());
-        this.connected = task.getConnected().stream().map(Task::getId).collect(Collectors.toSet());
         this.scheduleId = task.getScheduleId();
     }
 
