@@ -32,6 +32,7 @@ public class Task {
             @JoinColumn(name = "pair_id", referencedColumnName = "id")})
     @ManyToMany(targetEntity = Task.class, cascade = CascadeType.ALL)
     private List<Task> connected;
+    private int scheduleId;
 
     public Task(TaskModel taskModel, Task parent) {
         this.name = taskModel.getName();
@@ -47,6 +48,7 @@ public class Task {
         }
         this.children = new ArrayList<>();
         this.connected = new ArrayList<>();
+        this.scheduleId = taskModel.getScheduleId();
     }
 
     public Task() {
@@ -139,6 +141,14 @@ public class Task {
 
     public void setConnected(List<Task> connected) {
         this.connected = connected;
+    }
+
+    public int getScheduleId() {
+        return scheduleId;
+    }
+
+    public void setScheduleId(int scheduleId) {
+        this.scheduleId = scheduleId;
     }
 
     public void addChild(Task task) {

@@ -22,6 +22,7 @@ public class TaskModel implements TaskResponse {
     private Integer parentTask;
     private List<Integer> children;
     private List<Integer> connected;
+    private int scheduleId;
 
     public int getId() {
         return id;
@@ -115,19 +116,28 @@ public class TaskModel implements TaskResponse {
         this.connected = connected;
     }
 
+    public int getScheduleId() {
+        return scheduleId;
+    }
+
+    public void setScheduleId(int scheduleId) {
+        this.scheduleId = scheduleId;
+    }
+
     public TaskModel() { }
 
     @JsonCreator
     public TaskModel(@JsonProperty("name") String name,
-                     @JsonProperty("start_date") String startDate,
-                     @JsonProperty("shift_earlier_price") int shiftEarlierPrice,
-                     @JsonProperty("shift_later_price") int shiftLaterPrice,
+                     @JsonProperty("startDate") String startDate,
+                     @JsonProperty("shiftEarlierPrice") int shiftEarlierPrice,
+                     @JsonProperty("shiftLaterPrice") int shiftLaterPrice,
                      @JsonProperty("duration") int duration,
-                     @JsonProperty("min_duration") int minDuration,
-                     @JsonProperty("reduce_duration_price") int reduceDurationPrice,
-                     @JsonProperty("parent_task") Integer parentTask,
-                     @JsonProperty("children") List<Integer> children,
-                     @JsonProperty("connected") List<Integer> connected) {
+                     @JsonProperty("minDuration") int minDuration,
+                     @JsonProperty("reduceDurationPrice") int reduceDurationPrice,
+                     @JsonProperty("parentTask") Integer parentTask,
+                     @JsonProperty("childrenTasks") List<Integer> children,
+                     @JsonProperty("connectedTasks") List<Integer> connected,
+                     @JsonProperty("scheduleId") int scheduleId) {
         this.name = name;
         this.startDate = startDate;
         this.shiftEarlierPrice = shiftEarlierPrice;
@@ -138,6 +148,7 @@ public class TaskModel implements TaskResponse {
         this.parentTask = parentTask;
         this.children = children;
         this.connected = connected;
+        this.scheduleId = scheduleId;
     }
 
     public TaskModel(Task task) {
@@ -152,5 +163,6 @@ public class TaskModel implements TaskResponse {
         this.parentTask = (task.getParent() == null ? null : task.getParent().getId());
         this.children = task.getChildren().stream().map(Task::getId).collect(Collectors.toList());
         this.connected = task.getConnected().stream().map(Task::getId).collect(Collectors.toList());
+        this.scheduleId = task.getScheduleId();
     }
 }
