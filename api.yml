@@ -32,6 +32,11 @@ components:
         parentTask:
           type: integer
           format: int32
+        childrenTasks:
+          type: array
+          items:
+            type: integer
+            format: int32
         connectedTasks:
           type: array
           items:
