@@ -63,6 +63,11 @@ input[type=text]{
 	margin: 5px;
 	border-radius: 10px;
 }
+input[type=date]{
+	padding: 5px 5px;
+	margin: 5px;
+	border-radius: 10px;
+}
 form{
 	margin:0;
 }
@@ -112,10 +117,13 @@ option{
 }
 #projectName{
 	margin-top: 3%;
-	margin-left: 5%;
 	margin-bottom:3%;
 	font-size: 18px;
 	font-family:RosatomBold;
+	color: white;
+	background-color:#003274;
+	padding: 10px;
+	text-align: center;
 }
 /* скрываем чекбоксы и блоки с содержанием */
 .hide {
@@ -219,89 +227,20 @@ option{
 	padding:0;
 	margin:0;
 }
-:root {
-  --white: #fff;
-  --divider: lightgrey;
-  --body: #f5f7f8;
+.linkToProj{
+	margin-left:5%;
+	margin-top: 1%;
 }
-
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
-
-ul {
-  list-style: none;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-body {
-  background: var(--body);
-  font-size: 16px;
-  font-family: sans-serif;
-  padding-top: 40px;
-}
-
-.chart-wrapper {
-  max-width: 1150px;
-  padding: 0 10px;
-  margin: 0 auto;
+.linkToProj a {
+	color:  #025EA1;
 }
 
 
-/* CHART-VALUES
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-.chart-wrapper .chart-values {
-  position: relative;
-  display: flex;
-  margin-bottom: 20px;
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
-.chart-wrapper .chart-values li {
-  flex: 1;
-  min-width: 80px;
-  text-align: center;
-}
-
-.chart-wrapper .chart-values li:not(:last-child) {
-  position: relative;
-}
-
-.chart-wrapper .chart-values li:not(:last-child)::before {
-  content: '';
-  position: absolute;
-  right: 0;
-  height: 510px;
-  border-right: 1px solid var(--divider);
-}
 
 
-/* CHART-BARS
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-.chart-wrapper .chart-bars li {
-  position: relative;
-  color: var(--white);
-  margin-bottom: 15px;
-  font-size: 16px;
-  border-radius: 20px;
-  padding: 10px 20px;
-  width: 0;
-  opacity: 0;
-  transition: all 0.65s linear 0.2s;
-}
 
-@media screen and (max-width: 600px) {
-  .chart-wrapper .chart-bars li {
-    padding: 10px;
-  }
-}
+
+
 
 
 
