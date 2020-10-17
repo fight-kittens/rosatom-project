@@ -29,6 +29,26 @@
 				<label>Конец периода</label><input type="date" id="end" name="trip-end" value="2018-07-22" min="2018-01-01" max="2018-12-31">
 				<input type="submit" id="filtBut" name="butFilt" value="Применить">
 			</form>
+			<script>
+				var today = new Date();
+				var maxDate = new Date();
+				var dd = today.getDate();
+				var mm = today.getMonth()+1; //January is 0!
+				var yyyy = today.getFullYear();
+				 if(dd<10){
+						dd='0'+dd
+					} 
+					if(mm<10){
+						mm='0'+mm
+					} 
+
+				today = yyyy+'-'+mm+'-'+dd;
+				maxDate = yyyy+10+'-'+mm+'-'+dd;
+				document.getElementById("start").setAttribute("min", today);
+				document.getElementById("start").setAttribute("value", today);
+				document.getElementById("end").setAttribute("max", maxDate);
+				document.getElementById("end").setAttribute("value", maxDate);
+			</script>
 		</div>
 		<div id="gantt_here" style='width:100vw; height:100vh;'></div>
 		<script>
