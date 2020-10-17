@@ -3,7 +3,9 @@ package com.github.fightkittens.kronos.entities;
 import com.github.fightkittens.kronos.model.TaskModel;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -36,9 +38,9 @@ public class Task {
     private Set<Task> connected;
     private int scheduleId;
 
-    public Task(TaskModel taskModel, Task parent) {
+    public Task(TaskModel taskModel, Task parent) throws ParseException {
         this.name = taskModel.getName();
-        this.startDate = Date.valueOf(taskModel.getStartDate());
+        this.startDate = new SimpleDateFormat("yyyy-MM-dd").parse(taskModel.getStartDate());
         this.shiftEarlierPrice = taskModel.getShiftEarlierPrice();
         this.shiftLaterPrice = taskModel.getShiftLaterPrice();
         this.duration = taskModel.getDuration();

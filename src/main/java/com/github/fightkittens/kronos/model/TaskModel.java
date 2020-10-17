@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class TaskModel implements TaskResponse {
+public class TaskModel implements TaskResponse, Comparable<TaskModel> {
     private int id;
     private String name;
     private String startDate;
@@ -165,5 +165,10 @@ public class TaskModel implements TaskResponse {
         this.children = task.getChildren().stream().map(Task::getId).collect(Collectors.toSet());
         this.connected = task.getConnected().stream().map(Task::getId).collect(Collectors.toSet());
         this.scheduleId = task.getScheduleId();
+    }
+
+    @Override
+    public int compareTo(TaskModel o) {
+        return (Integer.compare(id, o.getId()));
     }
 }

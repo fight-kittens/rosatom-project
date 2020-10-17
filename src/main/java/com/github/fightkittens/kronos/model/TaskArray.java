@@ -4,23 +4,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class TaskArray implements TaskResponse  {
-    private Set<TaskModel> tasks;
+    private SortedSet<TaskModel> tasks;
 
-    public Set<TaskModel> getTasks() {
+    public SortedSet<TaskModel> getTasks() {
         return tasks;
     }
 
-    public void setTasks(Set<TaskModel> tasks) {
+    public void setTasks(SortedSet<TaskModel> tasks) {
         this.tasks = tasks;
     }
 
     public TaskArray() {
-        this.tasks = new LinkedHashSet<>();
+        this.tasks = new TreeSet<>();
     }
 
-    public TaskArray(@JsonProperty("tasks") Set<TaskModel> tasks) {
+    public TaskArray(@JsonProperty("tasks") SortedSet<TaskModel> tasks) {
         this.tasks = tasks;
     }
 }
