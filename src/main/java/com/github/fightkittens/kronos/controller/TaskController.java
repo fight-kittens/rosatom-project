@@ -1,10 +1,7 @@
 package com.github.fightkittens.kronos.controller;
 
 import com.github.fightkittens.kronos.entities.Task;
-import com.github.fightkittens.kronos.model.ErrorResponse;
-import com.github.fightkittens.kronos.model.TaskArray;
-import com.github.fightkittens.kronos.model.TaskModel;
-import com.github.fightkittens.kronos.model.TaskResponse;
+import com.github.fightkittens.kronos.model.*;
 import com.github.fightkittens.kronos.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/tasks")
@@ -174,7 +172,9 @@ public class TaskController {
         Task task = repository.findById(id).orElse(null);
         if (task != null) {
             TaskModel model = new TaskModel(task);
-            TaskArray connected = new TaskArray(model.getConnected());
+            Set<TaskModel> results = repository.findAllById(model.getConnected())
+                    .stream().map(TaskModel::new).collect(Collectors.toSet());
+            TaskArray connected = new TaskArray(results);
             return new ResponseEntity<>(connected, HttpStatus.OK);
         }
         return new ResponseEntity<>(new ErrorResponse(String.format("Task with id %d not found", id)),
@@ -183,8 +183,8 @@ public class TaskController {
 
     @PostMapping(value = "/connected/batch", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<? extends TaskResponse> getConnectedById(@RequestBody TaskArray ids) {
-        Set<Integer> result = new LinkedHashSet<>();
+    public ResponseEntity<? extends TaskResponse> getConnectedById(@RequestBody TaskIdArray ids) {
+        Set<Integer> resultIds = new LinkedHashSet<>();
         Set<Integer> tasks = ids.getTasks();
         for (Integer id : tasks) {
             if (id <= 0) {
@@ -194,13 +194,16 @@ public class TaskController {
             Task task = repository.findById(id).orElse(null);
             if (task != null) {
                 TaskModel model = new TaskModel(task);
-                result.addAll(model.getConnected());
+                resultIds.addAll(model.getConnected());
             } else {
                 return new ResponseEntity<>(new ErrorResponse(String.format("Task with id %d not found", id)),
                         HttpStatus.NOT_FOUND);
             }
         }
-        return new ResponseEntity<>(new TaskArray(result), HttpStatus.OK);
+
+        Set<TaskModel> results = repository.findAllById(resultIds).stream()
+                .map(TaskModel::new).collect(Collectors.toSet());
+        return new ResponseEntity<>(new TaskArray(results), HttpStatus.OK);
     }
 
     @GetMapping(value = "/children/{id}", produces = "application/json")
@@ -213,7 +216,9 @@ public class TaskController {
         Task task = repository.findById(id).orElse(null);
         if (task != null) {
             TaskModel model = new TaskModel(task);
-            TaskArray children = new TaskArray(model.getChildren());
+            Set<TaskModel> results = repository.findAllById(model.getChildren())
+                    .stream().map(TaskModel::new).collect(Collectors.toSet());
+            TaskArray children = new TaskArray(results);
             return new ResponseEntity<>(children, HttpStatus.OK);
         }
         return new ResponseEntity<>(new ErrorResponse(String.format("Task with id %d not found", id)),

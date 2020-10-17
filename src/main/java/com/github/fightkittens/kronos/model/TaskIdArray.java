@@ -5,22 +5,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class TaskArray implements TaskResponse  {
-    private Set<TaskModel> tasks;
+public class TaskIdArray implements TaskResponse {
+    private Set<Integer> tasks;
 
-    public Set<TaskModel> getTasks() {
+    public Set<Integer> getTasks() {
         return tasks;
     }
 
-    public void setTasks(Set<TaskModel> tasks) {
+    public void setTasks(Set<Integer> tasks) {
         this.tasks = tasks;
     }
 
-    public TaskArray() {
+    public TaskIdArray() {
         this.tasks = new LinkedHashSet<>();
     }
 
-    public TaskArray(@JsonProperty("tasks") Set<TaskModel> tasks) {
+    public TaskIdArray(@JsonProperty("tasks") Set<Integer> tasks) {
         this.tasks = tasks;
     }
 }
