@@ -48,7 +48,7 @@ public class TaskService {
                     long startDays = ChronoUnit.DAYS.between(new SimpleDateFormat("yyyy-MM-dd")
                                     .parse(move.getNewStartDate()).toInstant(),
                             task.getStartDate().toInstant());
-                    if (startDays < 0) {
+                    if (startDays > 0) {
                         if (task.getShiftEarlierPrice() == -1) {
                             return -1;
                         } else {

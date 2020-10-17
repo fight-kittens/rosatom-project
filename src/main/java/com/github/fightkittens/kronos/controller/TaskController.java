@@ -222,9 +222,9 @@ public class TaskController {
 
     @PostMapping("/plan/calculate")
     @ResponseBody
-    public ResponseEntity<? extends TaskResponse> calculateChanges(@RequestBody List<TaskMove> moves) {
+    public ResponseEntity<? extends TaskResponse> calculateChanges(@RequestBody TaskMoves moves) {
         try {
-            long result = service.calculate(moves);
+            long result = service.calculate(moves.getMoves());
             return new ResponseEntity<>(new PenaltyValue(result), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -234,9 +234,9 @@ public class TaskController {
 
     @PostMapping("/plan/append")
     @ResponseBody
-    public ResponseEntity<? extends TaskResponse> appendChanges(@RequestBody List<TaskMove> moves) {
+    public ResponseEntity<? extends TaskResponse> appendChanges(@RequestBody TaskMoves moves) {
         try {
-            service.append(moves);
+            service.append(moves.getMoves());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();

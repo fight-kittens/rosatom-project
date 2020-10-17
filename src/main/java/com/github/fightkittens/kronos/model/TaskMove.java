@@ -1,11 +1,15 @@
 package com.github.fightkittens.kronos.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class TaskMove implements TaskResponse {
     private int taskId;
     private int newDuration;
     private String newStartDate;
 
-    public TaskMove(int taskId, int newDuration, String newStartDate) {
+    public TaskMove(@JsonProperty("taskId") int taskId,
+                    @JsonProperty("newDuration") int newDuration,
+                    @JsonProperty("newStartDate") String newStartDate) {
         this.taskId = taskId;
         this.newDuration = newDuration;
         this.newStartDate = newStartDate;
