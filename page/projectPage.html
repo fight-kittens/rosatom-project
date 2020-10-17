@@ -46,6 +46,10 @@
 			gantt.config.date_format = "%Y-%m-%d";
 			gantt.init("gantt_here");
 			
+			gantt.config.scales = [
+				{unit: "month", step: 1, format: "%Y, %m, %d"}
+			];
+			
 			gantt.parse({
 			  data: [
 				{id: 1, text: "Project #1", start_date: null, duration: null, parent:0, progress: 0, open: true},
@@ -62,6 +66,8 @@
 				{id:4, source:5, target:6, type:"0"}
 			  ]
 			});
+			data1 = {tasks:[], links:[]};
+			data1.tasks.push([{id:obj.id, text:obj.name, start_date:obj.startDate, duration:obj.duration}])
 			
 		</script>
 

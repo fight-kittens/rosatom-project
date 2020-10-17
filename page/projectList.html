@@ -48,6 +48,9 @@
 		gantt.config.sort = true; 
 		gantt.config.date_format = "%Y-%m-%d";
 		gantt.init("gantt_here");
+		gantt.config.scales = [
+				{unit: "month", step: 1, format: "%Y, %m, %d"}
+			];
 		gantt.parse({
 		  data: [
 			{id: 1, text: "Schedule #1", start_date: '2019-08-01', end_date: '2019-08-03', Cost: 50, parent:0, progress: 0, open: false},

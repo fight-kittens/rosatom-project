@@ -3,71 +3,61 @@
 </head>
 
 <body>
-	<p id="demo"></p>
 
 	<script>
-	var name = []; 
-	var startDate = []; 
-	var shiftEarlierPrice = []; 
-	var shiftLaterPrice = []; 
-	var duration = []; 
-	var min_duration = []; 
-	var reduceDurationPrice = []; 
-	var parentTask = []; 
-	var childrenTasks = [];
-	var connectedTasks = []; 
-	var scheduleId = []; 
-	var id = [];
-	
-	var txt = '{"Tasks": [{"name": "MelissaHolland", "startDate": "1971-01-28", "shiftEarlierPrice": 1, "shiftLaterPrice": 0, "duration": 821, "min_duration": 201, "reduceDurationPrice": 1, "parentTask": null, "childrenTasks": [], "connectedTasks": [], "scheduleId": 1, "id": 0}, {"name": "RodneyAlexander", "startDate": "1971-09-13", "shiftEarlierPrice": 375393, "shiftLaterPrice": 0, "duration": 765, "min_duration": 110, "reduceDurationPrice": 0, "parentTask": null, "childrenTasks": [1,2], "connectedTasks": [], "scheduleId": 1, "id": 1}]}'
-	
-	var rezData = '{"tasks":[';
-	var rezLink = "";
-	var rez = "";
-	function readJsonFile(jsonFile) { 
-	  var reader = new FileReader(); 
-	  reader.addEventListener('load', (loadEvent) => { 
-		try { 
-		  json = JSON.parse(loadEvent.target.result); 
-		  console.log(json); 
-		} catch (error) { 
-		  console.error(error); 
-		} 
-	  }); 
-	  reader.readAsText(jsonFile); 
-	} 
+	var data, linkCount, obj;	
+	//let txt = require('../json/data_file.json');
+	let file = new File('../json/', 'data_file.json');
+	let reader = new FileReader();
+	reader.readAsText(file);
+	txt = reader.result;
 	txt= txt.split('},')
 	txt[0] = txt[0].replace('{"Tasks": [', '')+"}";
 	txt[txt.length - 1] = txt[txt.length -1].replace(']}', '');
-	var data1 = {tasks:[], links:[]};
-	for(var i = 0; i < txt.length; i++){
-		var obj = JSON.parse(txt[i]);
-		name[i] 				= obj.name;
-		startDate[i] 			= obj.startDate;
-		shiftEarlierPrice[i] 	= obj.shiftEarlierPrice;
-		shiftLaterPrice[i] 		= obj.shiftLaterPrice;
-		duration[i] 			= obj.duration;
-		min_duration[i] 		= obj.min_duration;
-		reduceDurationPrice[i]	= obj.reduceDurationPrice;
+	
+	data = {tasks:[], links:[]};
+	linkCount=1;
+	obj;
+	for(var i = 0; i < txt.length; i++)
+	{
+		obj = JSON.parse(txt[i]);
+		data.tasks.push({
+			id:obj.id, 
+			text:obj.name, 
+			start_date:obj.startDate, 
+			ErlierPrice:obj.shiftEarlierPrice, 
+			LaterPrice:obj.shiftLaterPrice, 
+			duration:obj.duration, 
+			MinDuration:obj.min_duration, 
+			DurationPrice:obj.reduceDurationPrice, 
+			parent:obj.scheduleId});		
 		
-		scheduleId[i] 			= obj.scheduleId;
-		id[i] 					= obj.id;
-
-		parentTask[i] 			= obj.parentTask;
-		childrenTasks[i] 		= obj.childrenTasks;
-		connectedTasks[i] 		= obj.connectedTasks;
-
-		data1.append(tasks, [{id:obj.id, text:obj.name, start_date:obj.startDate, duration:obj.duration}])
-		document.write(data1);
-		/*if(parentTask != null){
-			if{parentTask.length > 1}{
-				for(var i = 0; i < = parentTask.length){
-					
+		if(obj.parentTask != null)
+		{
+			if(obj.parentTask.length > 1)
+			{
+				for(var j = 0; j < obj.parentTask.length; j++)
+				{
+					data.links.push({
+						id:linkCount, 
+						source:obj.id, 
+						target:obj.parentTask[j], 
+						type:"0"});
+					linkCount++;
 				}
 			}
-		}*/
-		
-		document.getElementById("demo").innerHTML = obj.name + ", " + obj.childrenTasks.length;}
+		}
+		else
+		{
+			data.links.push({
+				id:linkCount, 
+				source:obj.id, 
+				target:obj.parentTask[0], 
+				type:"0"});
+		}
+	}
+	console.log(data)
+
 	</script>
 </body>
 </html>
