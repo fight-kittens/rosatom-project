@@ -5,7 +5,9 @@ import com.github.fightkittens.kronos.model.TaskModel;
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Task {
@@ -26,12 +28,12 @@ public class Task {
     @ManyToOne(targetEntity = Task.class, cascade = CascadeType.ALL)
     private Task parent;
     @OneToMany(targetEntity = Task.class)
-    private List<Task> children;
+    private Set<Task> children;
     @JoinTable(name = "stream_relation", joinColumns = {
             @JoinColumn(name = "task_id", referencedColumnName = "id")}, inverseJoinColumns = {
             @JoinColumn(name = "pair_id", referencedColumnName = "id")})
     @ManyToMany(targetEntity = Task.class, cascade = CascadeType.ALL)
-    private List<Task> connected;
+    private Set<Task> connected;
     private int scheduleId;
 
     public Task(TaskModel taskModel, Task parent) {
@@ -46,8 +48,8 @@ public class Task {
         if (parent != null) {
             parent.addChild(this);
         }
-        this.children = new ArrayList<>();
-        this.connected = new ArrayList<>();
+        this.children = new LinkedHashSet<>();
+        this.connected = new LinkedHashSet<>();
         this.scheduleId = taskModel.getScheduleId();
     }
 
@@ -125,21 +127,24 @@ public class Task {
 
     public void setParent(Task parent) {
         this.parent = parent;
+        if (parent != null) {
+            parent.addChild(this);
+        }
     }
 
-    public List<Task> getChildren() {
+    public Set<Task> getChildren() {
         return children;
     }
 
-    public void setChildren(List<Task> children) {
+    public void setChildren(Set<Task> children) {
         this.children = children;
     }
 
-    public List<Task> getConnected() {
+    public Set<Task> getConnected() {
         return connected;
     }
 
-    public void setConnected(List<Task> connected) {
+    public void setConnected(Set<Task> connected) {
         this.connected = connected;
     }
 

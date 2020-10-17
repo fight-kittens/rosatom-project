@@ -7,6 +7,7 @@ import com.github.fightkittens.kronos.entities.Task;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -20,8 +21,8 @@ public class TaskModel implements TaskResponse {
     private int minDuration;
     private int reduceDurationPrice;
     private Integer parentTask;
-    private List<Integer> children;
-    private List<Integer> connected;
+    private Set<Integer> children;
+    private Set<Integer> connected;
     private int scheduleId;
 
     public int getId() {
@@ -100,19 +101,19 @@ public class TaskModel implements TaskResponse {
         this.parentTask = parentTask;
     }
 
-    public List<Integer> getChildren() {
+    public Set<Integer> getChildren() {
         return children;
     }
 
-    public void setChildren(List<Integer> children) {
+    public void setChildren(Set<Integer> children) {
         this.children = children;
     }
 
-    public List<Integer> getConnected() {
+    public Set<Integer> getConnected() {
         return connected;
     }
 
-    public void setConnected(List<Integer> connected) {
+    public void setConnected(Set<Integer> connected) {
         this.connected = connected;
     }
 
@@ -135,8 +136,8 @@ public class TaskModel implements TaskResponse {
                      @JsonProperty("minDuration") int minDuration,
                      @JsonProperty("reduceDurationPrice") int reduceDurationPrice,
                      @JsonProperty("parentTask") Integer parentTask,
-                     @JsonProperty("childrenTasks") List<Integer> children,
-                     @JsonProperty("connectedTasks") List<Integer> connected,
+                     @JsonProperty("childrenTasks") Set<Integer> children,
+                     @JsonProperty("connectedTasks") Set<Integer> connected,
                      @JsonProperty("scheduleId") int scheduleId) {
         this.name = name;
         this.startDate = startDate;
@@ -161,8 +162,8 @@ public class TaskModel implements TaskResponse {
         this.minDuration = task.getMinDuration();
         this.reduceDurationPrice = task.getReduceDurationPrice();
         this.parentTask = (task.getParent() == null ? null : task.getParent().getId());
-        this.children = task.getChildren().stream().map(Task::getId).collect(Collectors.toList());
-        this.connected = task.getConnected().stream().map(Task::getId).collect(Collectors.toList());
+        this.children = task.getChildren().stream().map(Task::getId).collect(Collectors.toSet());
+        this.connected = task.getConnected().stream().map(Task::getId).collect(Collectors.toSet());
         this.scheduleId = task.getScheduleId();
     }
 }
