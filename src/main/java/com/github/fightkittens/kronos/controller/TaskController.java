@@ -3,6 +3,7 @@ package com.github.fightkittens.kronos.controller;
 import com.github.fightkittens.kronos.entities.Task;
 import com.github.fightkittens.kronos.model.*;
 import com.github.fightkittens.kronos.repositories.TaskRepository;
+import com.github.fightkittens.kronos.service.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ import java.util.stream.Collectors;
 public class TaskController {
     @Autowired
     TaskRepository repository;
+    @Autowired
+    TaskService service;
+
     private static Logger logger = LoggerFactory.getLogger(TaskController.class);
     @GetMapping(value = "/{id}", produces = "application/json")
     @ResponseBody
@@ -113,7 +117,7 @@ public class TaskController {
             return new ResponseEntity<>(new TaskModel(task), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new ErrorResponse("Exception: " + e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ErrorResponse("Exception: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -213,6 +217,55 @@ public class TaskController {
         } catch (Exception e) {
             return new ResponseEntity<>(new ErrorResponse("Invalid date format"),
                     HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/plan/calculate")
+    @ResponseBody
+    public ResponseEntity<? extends TaskResponse> calculateChanges(@RequestBody List<TaskMove> moves) {
+        try {
+            long result = service.calculate(moves);
+            return new ResponseEntity<>(new PenaltyValue(result), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ErrorResponse("Exception: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/plan/append")
+    @ResponseBody
+    public ResponseEntity<? extends TaskResponse> appendChanges(@RequestBody List<TaskMove> moves) {
+        try {
+            service.append(moves);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ErrorResponse("Exception: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping("/plan/current")
+    @ResponseBody
+    public ResponseEntity<? extends TaskResponse> getCurrentPrice() {
+        try {
+            return new ResponseEntity<>(new PenaltyValue(service.getCurrentPrice()), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ErrorResponse("Exception: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @PostMapping("/plan/current")
+    @ResponseBody
+    public ResponseEntity<? extends TaskResponse> setCurrentPrice(@RequestParam("price") long price) {
+        try {
+            service.setCurrentPrice(price);
+            return new ResponseEntity<>(new PenaltyValue(service.getCurrentPrice()), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ErrorResponse("Exception: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
