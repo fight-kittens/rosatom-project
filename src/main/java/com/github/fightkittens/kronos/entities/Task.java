@@ -38,6 +38,21 @@ public class Task {
     private Set<Task> connected;
     private int scheduleId;
 
+    public Task(TaskModel taskModel) throws ParseException {
+        this.name = taskModel.getName();
+        this.startDate = new SimpleDateFormat("yyyy-MM-dd").parse(taskModel.getStartDate());
+        this.shiftEarlierPrice = taskModel.getShiftEarlierPrice();
+        this.shiftLaterPrice = taskModel.getShiftLaterPrice();
+        this.duration = taskModel.getDuration();
+        this.minDuration = taskModel.getMinDuration();
+        this.reduceDurationPrice = taskModel.getReduceDurationPrice();
+        this.parent = null;
+        this.children = new LinkedHashSet<>();
+        this.connected = new LinkedHashSet<>();
+        this.scheduleId = taskModel.getScheduleId();
+    }
+
+
     public Task(TaskModel taskModel, Task parent) throws ParseException {
         this.name = taskModel.getName();
         this.startDate = new SimpleDateFormat("yyyy-MM-dd").parse(taskModel.getStartDate());

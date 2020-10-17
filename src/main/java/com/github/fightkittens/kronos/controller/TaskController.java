@@ -3,6 +3,8 @@ package com.github.fightkittens.kronos.controller;
 import com.github.fightkittens.kronos.entities.Task;
 import com.github.fightkittens.kronos.model.*;
 import com.github.fightkittens.kronos.repositories.TaskRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +16,12 @@ import java.util.Date;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
     @Autowired
     TaskRepository repository;
-
+    private static Logger logger = LoggerFactory.getLogger(TaskController.class);
     @GetMapping(value = "/{id}", produces = "application/json")
     @ResponseBody
     public ResponseEntity<? extends TaskResponse> getById(@PathVariable int id) {
@@ -166,6 +166,59 @@ public class TaskController {
             }
             repository.saveAndFlush(task);
             return new ResponseEntity<>(new TaskModel(task), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ErrorResponse("Exception: " + e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/batch", consumes = "application/json")
+    @ResponseBody
+    public ResponseEntity<? extends TaskResponse> addBatch(@RequestBody TaskArray array) {
+        try {
+            SortedSet<Integer> tasks = new TreeSet<>();
+            SortedSet<TaskModel> modelArray = array.getTasks();
+            for (TaskModel model : modelArray) {
+                Task parentTask;
+                if (model.getParentTask() == null) {
+                    parentTask = null;
+                } else {
+                    parentTask = repository.findById(model.getParentTask()).orElse(null);
+                }
+                Task task = new Task(model, parentTask);
+                repository.save(task);
+                if (parentTask != null) {
+                    repository.save(parentTask);
+                }
+                for (Integer id : model.getChildren()) {
+                    Task childTask = repository.findById(id).orElse(null);
+                    if (childTask == null) {
+                        return new ResponseEntity<>(new ErrorResponse(String.format("Child with id %d not found", id)), HttpStatus.BAD_REQUEST);
+                    } else {
+                        if (childTask.getParent() != null) {
+                            return new ResponseEntity<>(new ErrorResponse(String.format("Child with id %d already has a parent", id)), HttpStatus.BAD_REQUEST);
+                        }
+                        childTask.setParent(task);
+                        task.addChild(childTask);
+                        repository.save(task);
+                        repository.save(childTask);
+                        logger.info("{}: {}", task.getId(), childTask.getId());
+                    }
+                }
+                for (Integer id : model.getConnected()) {
+                    Task connectedTask = repository.findById(id).orElse(null);
+                    if (connectedTask == null) {
+                        return new ResponseEntity<>(new ErrorResponse(String.format("Connected task with id %d not found", id)), HttpStatus.BAD_REQUEST);
+                    } else {
+                        task.addConnected(connectedTask);
+                        connectedTask.addConnected(task);
+                        repository.save(connectedTask);
+                    }
+                }
+                tasks.add(task.getId());
+                repository.saveAndFlush(task);
+            }
+            return new ResponseEntity<>(new TaskIdArray(tasks), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(new ErrorResponse("Exception: " + e.getMessage()), HttpStatus.BAD_REQUEST);
