@@ -2,6 +2,7 @@ package com.github.fightkittens.kronos.controller;
 
 import com.github.fightkittens.kronos.entities.Task;
 import com.github.fightkittens.kronos.model.ErrorResponse;
+import com.github.fightkittens.kronos.model.TaskArray;
 import com.github.fightkittens.kronos.model.TaskModel;
 import com.github.fightkittens.kronos.model.TaskResponse;
 import com.github.fightkittens.kronos.repositories.TaskRepository;
@@ -9,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/tasks")
@@ -31,7 +36,6 @@ public class TaskController {
         return new ResponseEntity<>(new ErrorResponse(String.format("Task with id %d not found", id)),
                 HttpStatus.NOT_FOUND);
     }
-
 
     @DeleteMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<? extends TaskResponse> deleteById(@PathVariable int id) {
@@ -157,5 +161,62 @@ public class TaskController {
             e.printStackTrace();
             return new ResponseEntity<>(new ErrorResponse("Exception: " + e.getMessage()), HttpStatus.BAD_REQUEST);
         }
+    }
+
+
+    @GetMapping(value = "/connected/{id}", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<? extends TaskResponse> getConnectedById(@PathVariable int id) {
+        if (id <= 0) {
+            return new ResponseEntity<>(new ErrorResponse(String.format("Task id must be a positive integer", id)),
+                    HttpStatus.BAD_REQUEST);
+        }
+        Task task = repository.findById(id).orElse(null);
+        if (task != null) {
+            TaskModel model = new TaskModel(task);
+            TaskArray connected = new TaskArray(model.getConnected());
+            return new ResponseEntity<>(connected, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ErrorResponse(String.format("Task with id %d not found", id)),
+                HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping(value = "/connected/batch", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<? extends TaskResponse> getConnectedById(@RequestBody TaskArray ids) {
+        Set<Integer> result = new LinkedHashSet<>();
+        Set<Integer> tasks = ids.getTasks();
+        for (Integer id : tasks) {
+            if (id <= 0) {
+                return new ResponseEntity<>(new ErrorResponse(String.format("Task id must be a positive integer", id)),
+                        HttpStatus.BAD_REQUEST);
+            }
+            Task task = repository.findById(id).orElse(null);
+            if (task != null) {
+                TaskModel model = new TaskModel(task);
+                result.addAll(model.getConnected());
+            } else {
+                return new ResponseEntity<>(new ErrorResponse(String.format("Task with id %d not found", id)),
+                        HttpStatus.NOT_FOUND);
+            }
+        }
+        return new ResponseEntity<>(new TaskArray(result), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/children/{id}", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<? extends TaskResponse> getChildrenById(@PathVariable int id) {
+        if (id <= 0) {
+            return new ResponseEntity<>(new ErrorResponse(String.format("Task id must be a positive integer", id)),
+                    HttpStatus.BAD_REQUEST);
+        }
+        Task task = repository.findById(id).orElse(null);
+        if (task != null) {
+            TaskModel model = new TaskModel(task);
+            TaskArray children = new TaskArray(model.getChildren());
+            return new ResponseEntity<>(children, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ErrorResponse(String.format("Task with id %d not found", id)),
+                HttpStatus.NOT_FOUND);
     }
 }
