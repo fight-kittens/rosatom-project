@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="../css/style.css" type="text/css">
 	<script src="../Gantt/codebase/dhtmlxgantt.js"></script>
     <link href="../Gantt/codebase/dhtmlxgantt.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 </head>
 
 <body>
@@ -24,10 +25,10 @@
 	<main>
 		<p id="projectName">Project_Name (Дата: 01.01.2020 - 03.05.2022)</p>
 		<div class="filter">
-			<form name="chooseFilter" onsubmit="return false;" method="post" action="#">
-				<label>Начало периода</label><input type="date" id="start" name="trip-start" value="2018-07-22" min="2018-01-01" max="2018-12-31">
-				<label>Конец периода</label><input type="date" id="end" name="trip-end" value="2018-07-22" min="2018-01-01" max="2018-12-31">
-				<input type="submit" id="filtBut" name="butFilt" value="Применить">
+			<form name="chooseFilter1" onsubmit="return false;" method="post" action="#">
+				<label>Начало периода</label><input type="date" id="start1" name="trip-start" value="2018-07-22" min="2018-01-01" max="2018-12-31">
+				<label>Конец периода</label><input type="date" id="end1" name="trip-end" value="2018-07-22" min="2018-01-01" max="2018-12-31">
+				<input type="submit" id="filtBut1" name="butFilt" value="Применить">
 			</form>
 			<form name="chooseFilter" onsubmit="return false;" method="post" action="#">
 				<label>Дата заморозки</label><input type="text" value="" placeholder="0" name="FreezData">
@@ -36,7 +37,18 @@
 		</div>
 		<div id="gantt_here" style='width:100vw; height:100vh;'></div>
     <script>
-		
+		$('#filtBut1').on("click", function() {
+        start = document.getElementById('start1').value
+        end = document.getElementById('end1').value
+        $.ajax({ 
+          url: "http://sovkov.net:8080/tasks?startDate=" + start + "&endDate=" + end,
+          dataType: "json",
+          method: "GET",
+          success: function(data) {
+            console.log(data);
+          }
+        });
+    });
 		gantt.config.columns =  [
 		{name:"text",         label:"Task name",  		width:130, 	tree:true },
 		{name:"start_date",   label:"Start time",   	width:80,	align:"center" },
