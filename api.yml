@@ -235,7 +235,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /tasks/{id}/connected:
+  /tasks/connected/{id}:
     get:
       description: Gets connected tasks by task ID
       parameters:
@@ -265,12 +265,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /tasks/{arrayOfId}/connected:
-    get:
+  /tasks/connected/batch:
+    post:
       description: Gets connected tasks by task ID
       parameters:
         - in: query
-          name: id
+          name: ids
           schema:
             type: array
             items:
