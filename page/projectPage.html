@@ -5,6 +5,7 @@
 	<title>Project_name</title>
 	<link rel="stylesheet" href="../css/style.css" type="text/css">
 	<script src="../Gantt/codebase/dhtmlxgantt.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <link href="../Gantt/codebase/dhtmlxgantt.css" rel="stylesheet">
 
 </head>
@@ -32,6 +33,19 @@
 		</div>
 		<div id="gantt_here" style='width:100vw; height:100vh;'></div>
 		<script>
+				$('#filtBut').on("click", function() {
+		        start = document.getElementById('start').value
+		        end = document.getElementById('end').value
+		        $.ajax({ 
+		          url: "http://sovkov.net:8080/tasks?startDate=" + start + "&endDate=" + end,
+		          dataType: "json",
+		          method: "GET",
+		          success: function(data) {
+		            console.log(data);
+		            alert("Yaaaa");
+		          }
+		        });
+		      });
 			gantt.config.columns =  [
 			{name:"text",         label:"Task name",  		width:120, 	tree:true },
 			{name:"start_date",   label:"Start time",   	width:80,	align:"center" },
