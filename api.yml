@@ -1,3 +1,4 @@
+openapi: 3.0.0
 title: RosAtom
 description: Gus ne bous
 components:
@@ -31,7 +32,22 @@ components:
         parentTask:
           type: integer
           format: int32
-          
+        connectedTasks:
+          type: array
+          items:
+            type: object
+            properties:
+              connectedTaskId:
+                type: integer
+                format: int32
+              scheduleId:
+                type: integer
+                format: int32
+        scheduleId:
+          type: integer
+          format: int32
+
+
     ArrayOfTasks:
       type: array
       items:
@@ -72,26 +88,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  
-  /tasks:
-    post:
-      description: Adds task to the database
-      parameters:
-        - in: body
-          name: task
-          schema:
-            $ref: '#/components/schemas/Task'
-          required: true
-          description: Task object
-      responses:
-        '200':
-          description: Task was added
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
 
-  /tasks/{id}:
     delete:
       description: Deletes task from database
       parameters:
@@ -116,8 +113,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-                
-  /tasks/{id}:
+
     put:
       description: Changes task by ID
       parameters:
@@ -127,7 +123,7 @@ paths:
             type: integer
           required: true
           description: Numeric ID of task to change
-        - in: body
+        - in: query
           name: task
           schema:
             $ref: '#/components/schemas/Task'
@@ -152,6 +148,60 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              
+  /tasks:
+    post:
+      description: Adds task to the database
+      parameters:
+        - in: query
+          name: task
+          schema:
+            $ref: '#/components/schemas/Task'
+          required: true
+          description: Task object
+      responses:
+        '200':
+          description: Task was added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+    get:
+      description: Gets tasks by start date and end date
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+          required: true
+          description: start date
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+          required: true
+          description: end date
+      responses:
+        '200':
+          description: Tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfTasks'
+        '400':
+          description: Bad request. Invalid date.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: A task with these dates was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /tasks/{id}/children:
     get:
@@ -165,7 +215,69 @@ paths:
           description: Numeric ID of parent task
       responses:
         '200':
-          description: Task was deleted
+          description: Children tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfTasks'
+        '400':
+          description: Bad request. Task ID must be an integer and larger than 0.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: A task with the specified ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tasks/{id}/connected:
+    get:
+      description: Gets connected tasks by task ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of connector task
+      responses:
+        '200':
+          description: Connected tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfTasks'
+        '400':
+          description: Bad request. Task ID must be an integer and larger than 0.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: A task with the specified ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tasks/{arrayOfId}/connected:
+    get:
+      description: Gets connected tasks by task ID
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: array
+            items:
+              type: integer
+          required: true
+          description: Array of numeric IDs of connector task
+      responses:
+        '200':
+          description: Connected tasks
           content:
             application/json:
               schema:
