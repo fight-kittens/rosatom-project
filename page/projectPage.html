@@ -1,0 +1,71 @@
+<html lang="ru">
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Project_name</title>
+	<link rel="stylesheet" href="../css/style.css" type="text/css">
+	<script src="../Gantt/codebase/dhtmlxgantt.js"></script>
+    <link href="../Gantt/codebase/dhtmlxgantt.css" rel="stylesheet">
+
+</head>
+
+<body>
+	<header>
+		<div class="header_logo">
+			<img src="../image/logo_rosatom.png">
+		</div>
+		<nav>
+			<div class="topnav" id="myTopnav">
+				<a href="userSetting.html"><img src="../image/setting.png"></a>
+				<p>User_name</p>
+			</div>
+		</nav>
+	</header>
+	<main>
+		<p id="projectName">Schedule_Name (Дата: 01.01.2020 - 03.05.2022)</p>
+		<div class="filter">
+			<form name="chooseFilter" onsubmit="return false;" method="post" action="#">
+				<label>Начало периода</label><input type="date" id="start" name="trip-start" value="2018-07-22" min="2018-01-01" max="2018-12-31">
+				<label>Конец периода</label><input type="date" id="end" name="trip-end" value="2018-07-22" min="2018-01-01" max="2018-12-31">
+				<input type="submit" id="filtBut" name="butFilt" value="Применить">
+			</form>
+		</div>
+		<div id="gantt_here" style='width:100vw; height:100vh;'></div>
+		<script>
+			gantt.config.columns =  [
+			{name:"text",         label:"Task name",  		width:120, 	tree:true },
+			{name:"start_date",   label:"Start time",   	width:80,	align:"center" },
+			{name:"ErlierPrice",  label:"Erlier Price",  	width:60, 	align:"center" },
+			{name:"LaterPrice",   label:"Later Price",  	width:60, 	align:"center" },
+			{name:"duration",     label:"Duration",  		width:60, 	align:"center" },
+			{name:"MinDuration",  label:"Min Duration",  	width:60, 	align:"center" },
+			{name:"DurationPrice",label:"Duration Price",  	width:80,	align:"center" }/*,
+			{name:"add",          label:"",           		width:44 }*/
+			];
+			gantt.config.sort = true; 
+			gantt.config.date_format = "%Y-%m-%d";
+			gantt.init("gantt_here");
+			
+			gantt.parse({
+			  data: [
+				{id: 1, text: "Project #1", start_date: null, duration: null, parent:0, progress: 0, open: true},
+				{id: 2, text: "Task #1", start_date: "2019-08-01", ErlierPrice: 20, LaterPrice: 700, duration: 10, MinDuration: 5, DurationPrice:100, parent:1, progress: 1},
+				{id: 3, text: "Task #2", start_date: "2019-08-06", ErlierPrice: 20, LaterPrice: 700, duration: 20, MinDuration: 5, DurationPrice:100, parent:1, progress: 0.5},
+				{id: 4, text: "Task #3", start_date: "2019-08-05", ErlierPrice: 20, LaterPrice: 700, duration: 13, MinDuration: 5, DurationPrice:100, parent:1, progress: 0.5},
+				{id: 5, text: "Task #4", start_date: "2019-08-09", ErlierPrice: 20, LaterPrice: 700, duration: 15, MinDuration: 5, DurationPrice:100, parent:1, progress: 0.2},
+				{id: 6, text: "Task #5", start_date: "2019-08-11", ErlierPrice: 20, LaterPrice: 700, duration: 25, MinDuration: 5, DurationPrice:100, parent:1, progress: 0}
+			  ],
+			  links:[
+				{id:1, source:2, target:3, type:"0"},
+				{id:2, source:1, target:3, type:"0"},
+				{id:3, source:3, target:4, type:"0"},
+				{id:4, source:5, target:6, type:"0"}
+			  ]
+			});
+			
+		</script>
+
+	</main>
+
+</body>
+</html>
