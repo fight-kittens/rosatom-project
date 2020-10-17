@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.fightkittens.kronos.entities.Task;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -129,7 +130,7 @@ public class TaskModel implements TaskResponse, Comparable<TaskModel> {
     public TaskModel(Task task) {
         this.id = task.getId();
         this.name = task.getName();
-        this.startDate = task.getStartDate().toString();
+        this.startDate = new SimpleDateFormat("yyyy-MM-dd").format(task.getStartDate());
         this.shiftEarlierPrice = task.getShiftEarlierPrice();
         this.shiftLaterPrice = task.getShiftLaterPrice();
         this.duration = task.getDuration();
