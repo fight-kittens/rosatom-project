@@ -7,10 +7,6 @@
 	<script>
 	var data, linkCount, obj;	
 	//let txt = require('../json/data_file.json');
-	let file = new File('../json/', 'data_file.json');
-	let reader = new FileReader();
-	reader.readAsText(file);
-	txt = reader.result;
 	txt= txt.split('},')
 	txt[0] = txt[0].replace('{"Tasks": [', '')+"}";
 	txt[txt.length - 1] = txt[txt.length -1].replace(']}', '');

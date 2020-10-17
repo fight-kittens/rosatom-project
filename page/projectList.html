@@ -5,6 +5,7 @@
 	<title>Мои проекты</title>
 	<link rel="stylesheet" href="../css/style.css" type="text/css">
 	<script src="../Gantt/codebase/dhtmlxgantt.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <link href="../Gantt/codebase/dhtmlxgantt.css" rel="stylesheet">
 </head>
 
@@ -25,13 +26,18 @@
 		<p id="projectName">Project_Name (Дата: 01.01.2020 - 03.05.2022)</p>
 		<div class="filter">
 			<form name="chooseFilter" onsubmit="return false;" method="post" action="#">
-				<label>Начало периода</label><input type="date" id="start" name="trip-start" value="2018-07-22" min="2018-01-01" max="2018-12-31">
-				<label>Конец периода</label><input type="date" id="end" name="trip-end" value="2018-07-22" min="2018-01-01" max="2018-12-31">
+				<label>Начало периода</label><input type="date" id="start" name="trip-start" value="">
+				<label>Конец периода</label><input type="date" id="end" name="trip-end" value="">
 				<input type="submit" id="filtBut" name="butFilt" value="Применить">
 			</form>
 			<form name="chooseFilter" onsubmit="return false;" method="post" action="#">
 				<label>Дата заморозки</label><input type="text" value="" placeholder="0" name="FreezData">
 				<input type="submit" id="filtBut" name="butFilt" value="Применить">
+			</form><br>
+			<form name="editSum" onsubmit="return false;" method="post" action="#">
+				<label>Итоговая сумма</label><label name ="totCost">1.000.000</label>
+				<label>Изменение суммы</label><label name ="editCost">-</label>
+				<input type="submit" id="cangeSum" name="butChange" value="Пересчитать">
 			</form>
 			<script>
 				var today = new Date();
@@ -47,15 +53,51 @@
 					} 
 
 				today = yyyy+'-'+mm+'-'+dd;
-				maxDate = yyyy+10+'-'+mm+'-'+dd;
-				document.getElementById("start").setAttribute("min", today);
+				maxDate = yyyy+2+'-'+mm+'-'+dd;
 				document.getElementById("start").setAttribute("value", today);
-				document.getElementById("end").setAttribute("max", maxDate);
 				document.getElementById("end").setAttribute("value", maxDate);
 			</script>
 		</div>
 		<div id="gantt_here" style='width:100vw; height:100vh;'></div>
     <script>
+		//var dataToBack;
+		$('#filtBut').on("click", function() {
+		        start = document.getElementById('start').value
+		        end = document.getElementById('end').value
+		        $.ajax({ 
+		          url: "http://sovkov.net:8080/tasks?startDate=" + start + "&endDate=" + end,
+		          dataType: "json",
+		          method: "GET",
+		          success: function(data) {
+		            console.log(data);
+		          }
+		        });
+			});
+			
+		$('#cangeSum').on("click", function() {
+				gantt.serialize('json');
+		        $.ajax({ 
+		          url: "",
+		          dataType: "json",
+		          method: "GET",
+		          success: function(data) {
+		            console.log(data);
+		          }
+		        });
+			});
+			
+		gantt.config.row_height = 25;
+		gantt.plugins({
+			undo: true
+		});
+
+		/*gantt.attachEvent("onAfterTaskUpdate", function(id,item){
+			
+		});
+		gantt.attachEvent("onAfterTaskDrag", function(id, parent, tindex){
+			// any custom logic here
+		});*/
+		
 		
 		gantt.config.columns =  [
 		{name:"text",         label:"Task name",  		width:130, 	tree:true },
@@ -65,26 +107,69 @@
 		/*,
 		{name:"add",          label:"",           		width:44 }*/
 		];
+		
 		gantt.config.sort = true; 
 		gantt.config.date_format = "%Y-%m-%d";
 		gantt.init("gantt_here");
-		gantt.config.scales = [
-				{unit: "month", step: 1, format: "%Y, %m, %d"}
+			
+			gantt.config.scale_height = 90;
+			var weekScaleTemplate = function (date) {
+				var dateToStr = gantt.date.date_to_str("%d %M");
+				var endDate = gantt.date.add(gantt.date.add(date, 1, "week"), -1, "day");
+				return dateToStr(date) + " - " + dateToStr(endDate);
+			};
+
+			var daysStyle = function(date){
+				if(date.getDay() === 0 || date.getDay() === 6){
+					return "weekend";
+				}
+				return "";
+			};
+
+			gantt.config.scales = [
+				{unit: "month", step: 1, format: "%F, %Y"},
+				{unit: "week", step: 1, format: weekScaleTemplate},
+				{unit: "day", step:1, format: "%d" }
 			];
+			
+			gantt.templates.tooltip_text = function(start,end,task){
+				return "<b>Task:</b> "+task.text+"<br/><b>Duration:</b> " + task.duration;
+			};
+			
+			
+			//gantt.load("data.json", "json")
+			
+			/*$(function () {
+				$(".mygantt").dhx_gantt();
+
+				$("#gantt1").dhx_gantt().parse({
+					data: [
+						{ id: 1, text: "Project #1", start_date: null, duration: null, parent:0, progress: 0, open: true },
+						{ id: 2, text: "Task #1", start_date: "2020-10-02", ErlierPrice: 20, LaterPrice: 700, duration: 10, MinDuration: 5, DurationPrice:100, parent:1, progress: 1 },
+						{ id: 3, text: "Task #2", start_date: "2020-10-09", ErlierPrice: 20, LaterPrice: 700, duration: 15, MinDuration: 5, DurationPrice:100, parent:1, progress: 0.5}
+					],
+					links: [
+						{id: 1, source: 1, target: 2, type: "0"}
+					]
+				});
+			}*/
+			
 		gantt.parse({
 		  data: [
-			{id: 1, text: "Schedule #1", start_date: '2019-08-01', end_date: '2019-08-03', Cost: 50, parent:0, progress: 0, open: false},
-			{id: 2, text: "Schedule #2", start_date: '2019-08-03', end_date: '2019-08-06', Cost: 10, parent:0, progress: 0, open: false},
-			{id: 3, text: "Schedule #3", start_date: '2019-08-06', end_date: '2019-08-07', Cost: 23, parent:0, progress: 0, open: false},
-			{id: 4, text: "Schedule #4", start_date: '2019-08-07', end_date: '2019-08-15', Cost: 30, parent:0, progress: 0, open: false},
-			{id: 5, text: "Schedule #5", start_date: '2019-08-09', end_date: '2019-08-13', Cost: 44, parent:0, progress: 0, open: false},
-			{id: 6, text: "Schedule #6", start_date: '2019-08-13', end_date: '2019-08-16', Cost: 50, parent:0, progress: 0, open: false},
+			{id: 1, text: "Schedule #1", start_date: '2020-08-01', end_date: '2020-08-03', Cost: 50, parent:0, progress: 0, open: false, readonly:true},
+			{id: 2, text: "Schedule #2", start_date: '2020-08-03', end_date: '2020-08-06', Cost: 10, parent:0, progress: 0, open: false},
+			{id: 3, text: "Schedule #3", start_date: '2020-08-06', end_date: '2020-08-07', Cost: 23, parent:0, progress: 0, open: false},
+			{id: 4, text: "Schedule #4", start_date: '2020-08-07', end_date: '2020-08-15', Cost: 30, parent:0, progress: 0, open: false},
+			{id: 5, text: "Schedule #5", start_date: '2020-08-09', end_date: '2020-08-13', Cost: 44, parent:0, progress: 0, open: false},
+			{id: 6, text: "Schedule #6", start_date: '2020-08-13', end_date: '2020-08-16', Cost: 50, parent:0, progress: 0, open: true},
+			{id: 7, text: "milestone",   start_date: "2020-08-17", end_date:null, 		   Cost:null, type: "milestone", parent:0, progress: 0}
 			
 		  ],
 		  links:[
 			{id:1, source:2, target:3, type:"0"},
 			{id:2, source:3, target:4, type:"0"},
-			{id:3, source:5, target:6, type:"0"}
+			{id:3, source:5, target:6, type:"0"},
+			{id:4, source:6, target:7, type:"0"}
 		  ]
 		});
 		
