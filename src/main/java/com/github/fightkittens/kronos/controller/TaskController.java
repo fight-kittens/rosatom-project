@@ -257,4 +257,17 @@ public class TaskController {
                     HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(value = "/schedule/{id}", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<? extends TaskResponse> filterBySchedule(@PathVariable("id") int id) {
+        try {
+            SortedSet<Integer> results = repository.filterBySchedule(id)
+                    .stream().map(TaskModel::new).map(TaskModel::getId).collect(Collectors.toCollection(TreeSet::new));
+            return new ResponseEntity<>(new TaskIdArray(results), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ErrorResponse("Invalid date format"),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
 }
