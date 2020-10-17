@@ -205,7 +205,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /tasks/{id}/children:
+  /tasks/children/{id}:
     get:
       description: Gets children of parent task by task ID
       parameters:
