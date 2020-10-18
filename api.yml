@@ -1,0 +1,298 @@
+openapi: 3.0.0
+title: RosAtom
+description: Gus ne bous
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        id: 
+          type: integer
+          format: int32
+        name:
+          type: string
+        startDate:
+          type: string
+          format: date
+        shiftEarlierPrice:
+          type: integer
+          format: int32
+        shiftLaterPrice:
+          type: integer
+          format: int32
+        duration:
+          type: integer
+          format: int32
+        minDuration:
+          type: integer
+          format: int32
+        reduceDurationPrice:
+          type: integer
+          format: int32
+        parentTask:
+          type: integer
+          format: int32
+        connectedTasks:
+          type: array
+          items:
+            type: integer
+            format: int32
+          #  type: objects
+          #  properties:
+          #    connectedTaskId:
+          #      type: integer
+          #      format: int32
+          #    scheduleId:
+          #      type: integer
+          #      format: int32
+        scheduleId:
+          type: integer
+          format: int32
+
+
+    ArrayOfTasks:
+      type: array
+      items:
+        $ref: '#/components/schemas/Task'
+    
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+paths:
+  /tasks/{id}:
+    get:
+      description: Returns task by id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of task to get
+      responses:
+        '200':
+          description: a task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Bad request. Task ID must be an integer and larger than 0.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: A task with the specified ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      description: Deletes task from database
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of task to delete
+      responses:
+        '200':
+          description: Task was deleted
+        '400':
+          description: Bad request. Task ID must be an integer and larger than 0.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: A task with the specified ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      description: Changes task by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of task to change
+        - in: query
+          name: task
+          schema:
+            $ref: '#/components/schemas/Task'
+          required: true
+          description: Task object
+      responses:
+        '200':
+          description: Task was deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Bad request. Task ID must be an integer and larger than 0.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: A task with the specified ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              
+  /tasks:
+    post:
+      description: Adds task to the database
+      parameters:
+        - in: query
+          name: task
+          schema:
+            $ref: '#/components/schemas/Task'
+          required: true
+          description: Task object
+      responses:
+        '200':
+          description: Task was added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+    get:
+      description: Gets tasks by start date and end date
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+          required: true
+          description: start date
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+          required: true
+          description: end date
+      responses:
+        '200':
+          description: Tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfTasks'
+        '400':
+          description: Bad request. Invalid date.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: A task with these dates was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tasks/children/{id}:
+    get:
+      description: Gets children of parent task by task ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of parent task
+      responses:
+        '200':
+          description: Children tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfTasks'
+        '400':
+          description: Bad request. Task ID must be an integer and larger than 0.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: A task with the specified ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tasks/connected/{id}:
+    get:
+      description: Gets connected tasks by task ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of connector task
+      responses:
+        '200':
+          description: Connected tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfTasks'
+        '400':
+          description: Bad request. Task ID must be an integer and larger than 0.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: A task with the specified ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tasks/connected/batch:
+    post:
+      description: Gets connected tasks by task ID
+      parameters:
+        - in: query
+          name: ids
+          schema:
+            type: array
+            items:
+              type: integer
+          required: true
+          description: Array of numeric IDs of connector task
+      responses:
+        '200':
+          description: Connected tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfTasks'
+        '400':
+          description: Bad request. Task ID must be an integer and larger than 0.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: A task with the specified ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
