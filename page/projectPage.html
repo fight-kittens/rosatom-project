@@ -1,0 +1,167 @@
+<html lang="ru">
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Project_name</title>
+	<link rel="stylesheet" href="../css/style.css" type="text/css">
+	<script src="../Gantt/codebase/dhtmlxgantt.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <link href="../Gantt/codebase/dhtmlxgantt.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+	<header>
+	
+		<div class="header_logo">
+			<img src="../image/logo_rosatom.png">
+		</div>
+		<nav>
+			<div class="topnav" id="myTopnav">
+				<a href="userSetting.html"><img src="../image/setting.png"></a>
+				<p>User_name</p>
+			</div>
+		</nav>
+	</header>
+	<main>
+		<p id="projectName">Schedule_Name (Дата: 01.01.2020 - 03.05.2022)</p>
+		<div class="filter">
+			<form name="chooseFilter">
+				<label>Начало периода</label><input type="date" id="start" name="trip-start" value="">
+				<label>Конец периода</label><input type="date" id="end" name="trip-end" value="">
+				<input type="button" id="filtBut" name="butFilt" value="Применить">
+			</form>
+			<script>
+				var today = new Date();
+				var maxDate = new Date();
+				var dd = today.getDate();
+				var mm = today.getMonth()+1; //January is 0!
+				var yyyy = today.getFullYear();
+				 if(dd<10){
+						dd='0'+dd
+					} 
+					if(mm<10){
+						mm='0'+mm
+					} 
+
+				today = yyyy+'-'+mm+'-'+dd;
+				maxDate = yyyy+2+'-'+mm+'-'+dd;
+				document.getElementById("start").setAttribute("value", today);
+				document.getElementById("end").setAttribute("value", maxDate);
+			</script>
+		</div>
+		<div id="gantt_here" style='width:100vw; height:100vh;'></div>
+		<script>
+			
+			gantt.config.row_height = 25;
+			
+			var editors = {
+			duration: { type: "number", map_to: "duration" },
+			};
+			
+			gantt.config.columns =  [
+			{name:"text",         label:"Task name",  		width:120, 	tree:true },
+			{name:"start_date",   label:"Start time",   	width:80,	align:"center" },
+			{name:"ErlierPrice",  label:"Erlier Price",  	width:60, 	align:"center" },
+			{name:"LaterPrice",   label:"Later Price",  	width:60, 	align:"center" },
+			{name:"duration",     label:"Duration",  		width:60, 	align:"center", editor: editors.duration },
+			{name:"MinDuration",  label:"Min Duration",  	width:80, 	align:"center" },
+			{name:"DurationPrice",label:"Price",  			width:50,	align:"center" }//,
+			//{name:"add",          label:"",           		width:44 }
+			];
+			gantt.config.sort = true; 
+			gantt.config.date_format = "%Y-%m-%d";
+			gantt.init("gantt_here");
+			
+
+			
+			gantt.config.scale_height = 90;
+			var weekScaleTemplate = function (date) {
+				var dateToStr = gantt.date.date_to_str("%d %M");
+				var endDate = gantt.date.add(gantt.date.add(date, 1, "week"), -1, "day");
+				return dateToStr(date) + " - " + dateToStr(endDate);
+			};
+
+			var daysStyle = function(date){
+				if(date.getDay() === 0 || date.getDay() === 6){
+					return "weekend";
+				}
+				return "";
+			};
+
+			gantt.config.scales = [
+				{unit: "month", step: 1, format: "%F, %Y"},
+				{unit: "week", step: 1, format: weekScaleTemplate},
+				{unit: "day", step:1, format: "%d" }
+			];
+			
+			gantt.templates.tooltip_text = function(start,end,task){
+				return "<b>Task:</b> "+task.text+"<br/><b>Duration:</b> " + task.duration;
+			};
+
+			$(document).ready(function() {
+		        start = document.getElementById('start').value
+		        end = document.getElementById('end').value
+				
+				id = window.location.search.match(new RegExp('id' + '=([^&=]+)'))[1];
+		        $.ajax({ 
+		          url: "http://sovkov.net:8080/tasks/schedule/" + id + "/period?startDate=" + start + "&endDate=" + end,
+		          dataType: "json",
+		          method: "GET",
+		          success: function(tasks) {
+		            data = []
+					links = []
+					tasks = tasks.tasks
+					for (i = 0; i < tasks.length; i++) {
+						data.push({
+							id: tasks[i].id, text: tasks[i].name, start_date: tasks[i].startDate, duration: tasks[i].duration,
+							ErlierPrice: tasks[i].shiftEarlierPrice, LaterPrice: tasks[i].shiftLaterPrice, MinDuration: tasks[i].minDuration,
+							DurationPrice:tasks[i].reduceDurationPrice, progress: 0, open: true
+						})
+						
+						for (j = 0; j < tasks[i].children.length; j++) {
+							links.push({
+								id: j + i, source:tasks[i].id, target:tasks[i].children[j], type:"0"
+							})
+						}
+					}
+					gantt.parse({ data, links});
+		          }
+		        });
+		      });
+			  
+			  $('#filtBut').on("click", function() {
+				start = document.getElementById('start').value
+		        end = document.getElementById('end').value
+				id = window.location.search.match(new RegExp('id' + '=([^&=]+)'))[1];
+		        $.ajax({ 
+		          url: "http://sovkov.net:8080/tasks/schedule/" + id + "/period?startDate=" + start + "&endDate=" + end,
+		          dataType: "json",
+		          method: "GET",
+		          success: function(tasks) {
+		            data = []
+					links = []
+					tasks = tasks.tasks
+					for (i = 0; i < tasks.length; i++) {
+						data.push({
+							id: tasks[i].id, text: tasks[i].name, start_date: tasks[i].startDate, duration: tasks[i].duration,
+							ErlierPrice: tasks[i].shiftEarlierPrice, LaterPrice: tasks[i].shiftLaterPrice, MinDuration: tasks[i].minDuration,
+							DurationPrice:tasks[i].reduceDurationPrice, progress: 0, open: true
+						})
+						
+						for (j = 0; j < tasks[i].children.length; j++) {
+							links.push({
+								id: j + i, source:tasks[i].id, target: tasks[i].children[j], type:"0"
+							})
+						}
+					}
+					gantt.parse({ data, links});
+		          }
+					});
+				});
+			
+		</script>
+	</main>
+
+</body>
+</html>
