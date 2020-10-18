@@ -252,8 +252,14 @@ public class TaskController {
     @ResponseBody
     public ResponseEntity<? extends TaskResponse> getSchedules() {
         try {
-            SortedSet<Integer> results = new TreeSet<>(repository.getSchedules());
-            return new ResponseEntity<>(new TaskIdArray(results), HttpStatus.OK);
+            SortedSet<Integer> scheduleIds = new TreeSet<>(repository.getSchedules());
+            ScheduleArray results = new ScheduleArray(new ArrayList<>());
+            for (Integer i : scheduleIds) {
+                Collection<Task> scheduleTasks = repository.filterBySchedule(i);
+                ScheduleParams params = new ScheduleParams(scheduleTasks);
+                results.getSchedules().add(params);
+            }
+            return new ResponseEntity<>(results, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(new ErrorResponse("Invalid request"),
                     HttpStatus.BAD_REQUEST);
