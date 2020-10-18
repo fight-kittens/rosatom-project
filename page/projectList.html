@@ -79,7 +79,11 @@
 							end_date: tasks[i].endDate, Cost: tasks[i].durationCost,
 							progress: 0, open: true
 						})
-						$('.linkToProj').append('<a href = "projectPage.html?id=' + tasks[i].scheduleId + '">Schedule #' + tasks[i].scheduleId + '</a><br>')
+						gantt.attachEvent("onTaskClick", function(id,e) {
+        					window.location.href = "projectPage.html?id=" + id
+        					return true;
+						})
+						//$('.linkToProj').append('<a href = "projectPage.html?id=' + tasks[i].scheduleId + '">Schedule #' + tasks[i].scheduleId + '</a><br>')
 					}
 					gantt.parse({ data, links});
 		          }
