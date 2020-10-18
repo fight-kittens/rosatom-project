@@ -102,8 +102,10 @@
 			$(document).ready(function() {
 		        start = document.getElementById('start').value
 		        end = document.getElementById('end').value
+				
+				id = window.location.search.match(new RegExp('id' + '=([^&=]+)'))[1];
 		        $.ajax({ 
-		          url: "http://sovkov.net:8080/tasks?startDate=" + start + "&endDate=" + end,
+		          url: "http://sovkov.net:8080/tasks/schedule/" + id + "/period?startDate=" + start + "&endDate=" + end,
 		          dataType: "json",
 		          method: "GET",
 		          success: function(tasks) {
@@ -119,7 +121,7 @@
 						
 						for (j = 0; j < tasks[i].children.length; j++) {
 							links.push({
-								id: j + i, source:tasks[i].children[j], target:tasks[i].id, type:"0"
+								id: j + i, source:tasks[i].id, target:tasks[i].children[j], type:"0"
 							})
 						}
 					}
@@ -131,8 +133,9 @@
 			  $('#filtBut').on("click", function() {
 				start = document.getElementById('start').value
 		        end = document.getElementById('end').value
+				id = window.location.search.match(new RegExp('id' + '=([^&=]+)'))[1];
 		        $.ajax({ 
-		          url: "http://sovkov.net:8080/tasks?startDate=" + start + "&endDate=" + end,
+		          url: "http://sovkov.net:8080/tasks/schedule/" + id + "/period?startDate=" + start + "&endDate=" + end,
 		          dataType: "json",
 		          method: "GET",
 		          success: function(tasks) {
@@ -148,7 +151,7 @@
 						
 						for (j = 0; j < tasks[i].children.length; j++) {
 							links.push({
-								id: j + i, source:tasks[i].children[j], target:tasks[i].id, type:"0"
+								id: j + i, source:tasks[i].id, target: tasks[i].children[j], type:"0"
 							})
 						}
 					}
