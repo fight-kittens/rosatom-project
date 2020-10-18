@@ -12,7 +12,6 @@
 
 <body>
 	<header>
-	
 		<div class="header_logo">
 			<img src="../image/logo_rosatom.png">
 		</div>
@@ -26,7 +25,7 @@
 	<main>
 		<p id="projectName">Schedule_Name (Дата: 01.01.2020 - 03.05.2022)</p>
 		<div class="filter">
-			<form name="chooseFilter">
+			<form name="chooseFilter" onsubmit="return false;" method="post" action="#">
 				<label>Начало периода</label><input type="date" id="start" name="trip-start" value="">
 				<label>Конец периода</label><input type="date" id="end" name="trip-end" value="">
 				<input type="button" id="filtBut" name="butFilt" value="Применить">
@@ -52,6 +51,18 @@
 		</div>
 		<div id="gantt_here" style='width:100vw; height:100vh;'></div>
 		<script>
+			$('#filtBut').on("click", function() {
+		        start = document.getElementById('start').value
+		        end = document.getElementById('end').value
+		        $.ajax({ 
+		          url: "http://sovkov.net:8080/tasks?startDate=" + start + "&endDate=" + end,
+		          dataType: "json",
+		          method: "GET",
+		          success: function(data) {
+		            console.log(data);
+		          }
+		        });
+		      });
 			
 			gantt.config.row_height = 25;
 			
@@ -73,13 +84,15 @@
 			gantt.config.date_format = "%Y-%m-%d";
 			gantt.init("gantt_here");
 			
+
+			
 			gantt.config.scale_height = 90;
 			var weekScaleTemplate = function (date) {
 				var dateToStr = gantt.date.date_to_str("%d %M");
 				var endDate = gantt.date.add(gantt.date.add(date, 1, "week"), -1, "day");
 				return dateToStr(date) + " - " + dateToStr(endDate);
 			};
-      
+
 			var daysStyle = function(date){
 				if(date.getDay() === 0 || date.getDay() === 6){
 					return "weekend";
@@ -96,14 +109,12 @@
 			gantt.templates.tooltip_text = function(start,end,task){
 				return "<b>Task:</b> "+task.text+"<br/><b>Duration:</b> " + task.duration;
 			};
-
+			
 			$(document).ready(function() {
 		        start = document.getElementById('start').value
 		        end = document.getElementById('end').value
-				
-				id = window.location.search.match(new RegExp('id' + '=([^&=]+)'))[1];
 		        $.ajax({ 
-		          url: "http://sovkov.net:8080/tasks/schedule/" + id + "/period?startDate=" + start + "&endDate=" + end,
+		          url: "http://sovkov.net:8080/tasks?startDate=" + start + "&endDate=" + end,
 		          dataType: "json",
 		          method: "GET",
 		          success: function(tasks) {
@@ -119,7 +130,7 @@
 						
 						for (j = 0; j < tasks[i].children.length; j++) {
 							links.push({
-								id: j + i, source:tasks[i].id, target:tasks[i].children[j], type:"0"
+								id: j + i, source:tasks[i].children[j], target:tasks[i].id, type:"0"
 							})
 						}
 					}
@@ -131,9 +142,8 @@
 			  $('#filtBut').on("click", function() {
 				start = document.getElementById('start').value
 		        end = document.getElementById('end').value
-				id = window.location.search.match(new RegExp('id' + '=([^&=]+)'))[1];
 		        $.ajax({ 
-		          url: "http://sovkov.net:8080/tasks/schedule/" + id + "/period?startDate=" + start + "&endDate=" + end,
+		          url: "http://sovkov.net:8080/tasks?startDate=" + start + "&endDate=" + end,
 		          dataType: "json",
 		          method: "GET",
 		          success: function(tasks) {
@@ -149,7 +159,7 @@
 						
 						for (j = 0; j < tasks[i].children.length; j++) {
 							links.push({
-								id: j + i, source:tasks[i].id, target: tasks[i].children[j], type:"0"
+								id: j + i, source:tasks[i].children[j], target:tasks[i].id, type:"0"
 							})
 						}
 					}
@@ -157,8 +167,43 @@
 		          }
 					});
 				});
+			//gantt.load("data.json", "json")
+			
+			/*$(function () {
+				$(".mygantt").dhx_gantt();
+
+				$("#gantt1").dhx_gantt().parse({
+					data: [
+						{ id: 1, text: "Project #1", start_date: null, duration: null, parent:0, progress: 0, open: true },
+						{ id: 2, text: "Task #1", start_date: "2020-10-02", ErlierPrice: 20, LaterPrice: 700, duration: 10, MinDuration: 5, DurationPrice:100, parent:1, progress: 1 },
+						{ id: 3, text: "Task #2", start_date: "2020-10-09", ErlierPrice: 20, LaterPrice: 700, duration: 15, MinDuration: 5, DurationPrice:100, parent:1, progress: 0.5}
+					],
+					links: [
+						{id: 1, source: 1, target: 2, type: "0"}
+					]
+				});
+			}
+			
+			
+			gantt.parse({
+			  data: [
+				{id: 1, text: "Project #1", start_date: null, duration: null, parent:0, progress: 0, open: true},
+				{id: 2, text: "Task #1", start_date: "2020-10-02", ErlierPrice: 20, LaterPrice: 700, duration: 10, MinDuration: 5, DurationPrice:100, parent:1, progress: 1 },
+				{id: 3, text: "Task #2", start_date: "2020-10-09", ErlierPrice: 20, LaterPrice: 700, duration: 15, MinDuration: 5, DurationPrice:100, parent:1, progress: 0.5},
+				{id: 4, text: "Task #3", start_date: "2020-10-07", ErlierPrice: 20, LaterPrice: 700, duration: 13, MinDuration: 5, DurationPrice:100, parent:1, progress: 0.5},
+				{id: 5, text: "Task #4", start_date: "2020-10-15", ErlierPrice: 20, LaterPrice: 700, duration: 10, MinDuration: 5, DurationPrice:100, parent:1, progress: 0.2},
+				{id: 6, text: "milestone", start_date: "2020-10-25", ErlierPrice: 20, LaterPrice: 700, type: "milestone", MinDuration: 5, DurationPrice:100, parent:1, progress: 0}
+			  ],
+			  links:[
+				{id:1, source:2, target:3, type:"0"},
+				{id:2, source:3, target:4, type:"0"},
+				{id:3, source:5, target:6, type:"0"}
+			  ]
+			});*/
+			
 			
 		</script>
+
 	</main>
 
 </body>
