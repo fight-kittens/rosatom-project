@@ -26,6 +26,14 @@ public class TaskController {
     TaskService service;
 
     private static Logger logger = LoggerFactory.getLogger(TaskController.class);
+
+    @GetMapping(value = "/all", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<? extends TaskResponse> getAll() {
+        SortedSet<TaskModel> tasks = repository.findAll().stream().map(TaskModel::new).collect(Collectors.toCollection(TreeSet::new));
+        return new ResponseEntity<>(new TaskArray(tasks), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/{id}", produces = "application/json")
     @ResponseBody
     public ResponseEntity<? extends TaskResponse> getById(@PathVariable int id) {
@@ -216,6 +224,18 @@ public class TaskController {
             return new ResponseEntity<>(new TaskIdArray(results), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(new ErrorResponse("Invalid date format"),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/schedule", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<? extends TaskResponse> getSchedules() {
+        try {
+            SortedSet<Integer> results = new TreeSet<>(repository.getSchedules());
+            return new ResponseEntity<>(new TaskIdArray(results), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ErrorResponse("Invalid request"),
                     HttpStatus.BAD_REQUEST);
         }
     }

@@ -15,4 +15,6 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     Collection<Task> filterByDate(@Param("start") Date start, @Param("end") Date end);
     @Query(value = "FROM Task t WHERE t.scheduleId = :id")
     Collection<Task> filterBySchedule(@Param("id") int id);
+    @Query(value = "SELECT DISTINCT t.scheduleId FROM Task t")
+    Collection<Integer> getSchedules();
 }
