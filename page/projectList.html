@@ -75,7 +75,7 @@
 					tasks = tasks.schedules
 					for (i = 0; i < tasks.length; i++) {
 						data.push({
-							id: tasks[i].scheduleId, text: "Schedule #" + tasks[i].scheduleId, start_date: tasks[i].startDate,
+							id: tasks[i].scheduleId, text: "<a href='projectPage.html?id=" + tasks[i].scheduleId + "'>Schedule #" + tasks[i].scheduleId + "</a>", start_date: tasks[i].startDate,
 							end_date: tasks[i].endDate, Cost: tasks[i].durationCost,
 							progress: 0, open: true
 						})
