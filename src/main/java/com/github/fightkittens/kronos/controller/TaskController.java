@@ -196,6 +196,26 @@ public class TaskController {
                 HttpStatus.NOT_FOUND);
     }
 
+
+    @GetMapping(value = "/schedule/{scheduleId}/period", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<? extends TaskResponse> scheduleFilterByDate(@PathVariable("scheduleId") int scheduleId, @RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate) {
+        try {
+            Date start = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
+            Date end = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
+            if (end.before(start)) {
+                return new ResponseEntity<>(new ErrorResponse("The end date is before the start date"),
+                        HttpStatus.BAD_REQUEST);
+            }
+            SortedSet<TaskModel> results = repository.filterByDateAndSchedule(start, end, scheduleId)
+                    .stream().map(TaskModel::new).collect(Collectors.toCollection(TreeSet::new));
+            return new ResponseEntity<>(new TaskArray(results), HttpStatus.OK);
+        } catch (ParseException e) {
+            return new ResponseEntity<>(new ErrorResponse("Invalid date format"),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(produces = "application/json")
     @ResponseBody
     public ResponseEntity<? extends TaskResponse> filterByDate(@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate) {
