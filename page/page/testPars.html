@@ -1,0 +1,59 @@
+<html>
+<head>
+</head>
+
+<body>
+
+	<script>
+	var data, linkCount, obj;	
+	//let txt = require('../json/data_file.json');
+	txt= txt.split('},')
+	txt[0] = txt[0].replace('{"Tasks": [', '')+"}";
+	txt[txt.length - 1] = txt[txt.length -1].replace(']}', '');
+	
+	data = {tasks:[], links:[]};
+	linkCount=1;
+	obj;
+	for(var i = 0; i < txt.length; i++)
+	{
+		obj = JSON.parse(txt[i]);
+		data.tasks.push({
+			id:obj.id, 
+			text:obj.name, 
+			start_date:obj.startDate, 
+			ErlierPrice:obj.shiftEarlierPrice, 
+			LaterPrice:obj.shiftLaterPrice, 
+			duration:obj.duration, 
+			MinDuration:obj.min_duration, 
+			DurationPrice:obj.reduceDurationPrice, 
+			parent:obj.scheduleId});		
+		
+		if(obj.parentTask != null)
+		{
+			if(obj.parentTask.length > 1)
+			{
+				for(var j = 0; j < obj.parentTask.length; j++)
+				{
+					data.links.push({
+						id:linkCount, 
+						source:obj.id, 
+						target:obj.parentTask[j], 
+						type:"0"});
+					linkCount++;
+				}
+			}
+		}
+		else
+		{
+			data.links.push({
+				id:linkCount, 
+				source:obj.id, 
+				target:obj.parentTask[0], 
+				type:"0"});
+		}
+	}
+	console.log(data)
+
+	</script>
+</body>
+</html>
